@@ -23,40 +23,150 @@ export const wireRope: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required wire rope breaking strength based on lifted mass, reeving falls, and coefficient of utilization.',
+  description:
+    'Calculates the required wire rope breaking strength based on lifted mass, reeving falls, and coefficient of utilization.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['M.H.', 'WIRE ROPE'],
 
   inputs: [
-    { key: 'swlTonnes', label: 'Safe Working Load (SWL)', unit: 't', type: 'number', defaultValue: 10.0, required: true, min: 0.1, description: 'Rated capacity' },
-    { key: 'hookBlockWeightTonnes', label: 'Hook Block Weight', unit: 't', type: 'number', defaultValue: 0.30, required: true, min: 0.0, description: 'Bottom block mass' },
-    { key: 'coefficientOfUtilization', label: 'Factor of Safety / Utilization (C25)', unit: '', type: 'number', defaultValue: 5.25, required: true, min: 3.0, description: 'IS 3177 rope utilization factor' },
-    { key: 'reevingDutyFactor', label: 'Rope Duty Factor (J53)', unit: '', type: 'number', defaultValue: 1.0, required: true, min: 0.5, description: 'Rope condition factor' },
-    { key: 'numberOfFalls', label: 'Number of Falls (C18)', unit: 'falls', type: 'number', defaultValue: 4, required: true, min: 1, step: 1, description: 'Rope falls carrying load' },
-    { key: 'selectedRopeId', label: 'Selected Wire Rope', unit: '', type: 'select', defaultValue: 'rope-16-6x36-1770', required: true, options: ROPE_CATALOG.map(r => ({ label: `Dia ${r.diameterMm}mm (${r.construction}, Grade ${r.tensileGradeNmm2}, Break: ${r.breakingForceKn} kN)`, value: r.id })), description: 'Catalog rope' },
-    { key: 'selectedBreakingForceKn', label: 'Selected Breaking Force', unit: 'kN', type: 'number', defaultValue: 149.0, required: true, min: 1.0, description: 'Catalog breaking strength in kN' },
-    { key: 'selectedRopeDiameterMm', label: 'Selected Rope Diameter', unit: 'mm', type: 'number', defaultValue: 16.0, required: true, min: 6.0, description: 'Nominal diameter in mm' },
+    {
+      key: 'swlTonnes',
+      label: 'Safe Working Load (SWL)',
+      unit: 't',
+      type: 'number',
+      defaultValue: 10.0,
+      required: true,
+      min: 0.1,
+      description: 'Rated capacity',
+    },
+    {
+      key: 'hookBlockWeightTonnes',
+      label: 'Hook Block Weight',
+      unit: 't',
+      type: 'number',
+      defaultValue: 0.3,
+      required: true,
+      min: 0.0,
+      description: 'Bottom block mass',
+    },
+    {
+      key: 'coefficientOfUtilization',
+      label: 'Factor of Safety / Utilization (C25)',
+      unit: '',
+      type: 'number',
+      defaultValue: 5.25,
+      required: true,
+      min: 3.0,
+      description: 'IS 3177 rope utilization factor',
+    },
+    {
+      key: 'reevingDutyFactor',
+      label: 'Rope Duty Factor (J53)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.0,
+      required: true,
+      min: 0.5,
+      description: 'Rope condition factor',
+    },
+    {
+      key: 'numberOfFalls',
+      label: 'Number of Falls (C18)',
+      unit: 'falls',
+      type: 'number',
+      defaultValue: 4,
+      required: true,
+      min: 1,
+      step: 1,
+      description: 'Rope falls carrying load',
+    },
+    {
+      key: 'selectedRopeId',
+      label: 'Selected Wire Rope',
+      unit: '',
+      type: 'select',
+      defaultValue: 'rope-16-6x36-1770',
+      required: true,
+      options: ROPE_CATALOG.map((r) => ({
+        label: `Dia ${r.diameterMm}mm (${r.construction}, Grade ${r.tensileGradeNmm2}, Break: ${r.breakingForceKn} kN)`,
+        value: r.id,
+      })),
+      description: 'Catalog rope',
+    },
+    {
+      key: 'selectedBreakingForceKn',
+      label: 'Selected Breaking Force',
+      unit: 'kN',
+      type: 'number',
+      defaultValue: 149.0,
+      required: true,
+      min: 1.0,
+      description: 'Catalog breaking strength in kN',
+    },
+    {
+      key: 'selectedRopeDiameterMm',
+      label: 'Selected Rope Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 16.0,
+      required: true,
+      min: 6.0,
+      description: 'Nominal diameter in mm',
+    },
   ],
 
   outputs: [
     { key: 'totalLiftedMassTonnes', label: 'Total Lifted Mass (J51)', unit: 't', description: 'SWL + Hook block mass' },
-    { key: 'requiredBreakingLoadTonnes', label: 'Required Breaking Load (t)', unit: 't', description: 'Minimum breaking load in tonnes (H56)' },
-    { key: 'requiredBreakingForceKn', label: 'Required Breaking Force (kN)', unit: 'kN', description: 'Minimum breaking load in kN (H57)' },
-    { key: 'selectedBreakingForceKn', label: 'Selected Breaking Force (kN)', unit: 'kN', description: 'Rated strength of selected rope' },
-    { key: 'selectedRopeDiameterMm', label: 'Selected Rope Diameter', unit: 'mm', description: 'Nominal rope diameter' },
+    {
+      key: 'requiredBreakingLoadTonnes',
+      label: 'Required Breaking Load (t)',
+      unit: 't',
+      description: 'Minimum breaking load in tonnes (H56)',
+    },
+    {
+      key: 'requiredBreakingForceKn',
+      label: 'Required Breaking Force (kN)',
+      unit: 'kN',
+      description: 'Minimum breaking load in kN (H57)',
+    },
+    {
+      key: 'selectedBreakingForceKn',
+      label: 'Selected Breaking Force (kN)',
+      unit: 'kN',
+      description: 'Rated strength of selected rope',
+    },
+    {
+      key: 'selectedRopeDiameterMm',
+      label: 'Selected Rope Diameter',
+      unit: 'mm',
+      description: 'Nominal rope diameter',
+    },
   ],
 
   dependencies: [
     { sourceToolId: 'master', sourceKey: 'swlTonnes', targetKey: 'swlTonnes', label: 'SWL' },
-    { sourceToolId: 'master', sourceKey: 'hookBlockWeightTonnes', targetKey: 'hookBlockWeightTonnes', label: 'Hook Block Weight' },
-    { sourceToolId: 'master', sourceKey: 'coefficientOfUtilization', targetKey: 'coefficientOfUtilization', label: 'Utilization Factor' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'hookBlockWeightTonnes',
+      targetKey: 'hookBlockWeightTonnes',
+      label: 'Hook Block Weight',
+    },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'coefficientOfUtilization',
+      targetKey: 'coefficientOfUtilization',
+      label: 'Utilization Factor',
+    },
     { sourceToolId: 'master', sourceKey: 'numberOfFalls', targetKey: 'numberOfFalls', label: 'Number of Falls' },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
     const swlTonnes = assertPositiveNumber(inputs.swlTonnes ?? 10.0, 'swlTonnes');
-    const hookBlockWeightTonnes = assertPositiveNumber(inputs.hookBlockWeightTonnes ?? 0.30, 'hookBlockWeightTonnes');
-    const coefficientOfUtilization = assertPositiveNumber(inputs.coefficientOfUtilization ?? 5.25, 'coefficientOfUtilization');
+    const hookBlockWeightTonnes = assertPositiveNumber(inputs.hookBlockWeightTonnes ?? 0.3, 'hookBlockWeightTonnes');
+    const coefficientOfUtilization = assertPositiveNumber(
+      inputs.coefficientOfUtilization ?? 5.25,
+      'coefficientOfUtilization',
+    );
     const reevingDutyFactor = assertPositiveNumber(inputs.reevingDutyFactor ?? 1.0, 'reevingDutyFactor');
     const numberOfFalls = assertPositiveNumber(inputs.numberOfFalls ?? 4, 'numberOfFalls');
 
@@ -75,7 +185,8 @@ export const wireRope: CalculationToolDefinition = {
     const totalLiftedMassTonnes = swlTonnes + hookBlockWeightTonnes;
 
     // H56 = J51 * J52 * J53 / J54
-    const requiredBreakingLoadTonnes = (totalLiftedMassTonnes * coefficientOfUtilization * reevingDutyFactor) / numberOfFalls;
+    const requiredBreakingLoadTonnes =
+      (totalLiftedMassTonnes * coefficientOfUtilization * reevingDutyFactor) / numberOfFalls;
 
     // H57 = H56 * 9.81
     const requiredBreakingForceKn = requiredBreakingLoadTonnes * 9.81;

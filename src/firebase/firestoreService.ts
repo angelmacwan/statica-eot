@@ -1,14 +1,4 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from './firebase';
 import { Project, ToolInstance } from '../types/project';
 import { EngineeringReport } from '../types/report';
@@ -20,7 +10,10 @@ const ENGINE_VERSION = '0.1.0';
 // Helper for localStorage fallback
 const LOCAL_STORAGE_KEY = 'statica_eot_offline_projects';
 
-function getLocalProjects(): Record<string, { project: Project; tools: Record<string, ToolInstance>; reports: Record<string, EngineeringReport> }> {
+function getLocalProjects(): Record<
+  string,
+  { project: Project; tools: Record<string, ToolInstance>; reports: Record<string, EngineeringReport> }
+> {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
@@ -182,7 +175,9 @@ export async function addToolInstance(
     displayName: toolDef.name,
     order: Date.now(),
     inputs: mergedInputs,
-    outputs: calculationResult ? Object.fromEntries(Object.entries(calculationResult.outputs).map(([k, v]) => [k, v.value])) : undefined,
+    outputs: calculationResult
+      ? Object.fromEntries(Object.entries(calculationResult.outputs).map(([k, v]) => [k, v.value]))
+      : undefined,
     calculationResult,
     calculationStatus: status,
     inputRevision: 1,
@@ -286,10 +281,7 @@ export async function deleteToolInstance(projectId: string, instanceId: string):
 }
 
 // Reports
-export async function saveReport(
-  projectId: string,
-  report: Omit<EngineeringReport, 'id'>,
-): Promise<EngineeringReport> {
+export async function saveReport(projectId: string, report: Omit<EngineeringReport, 'id'>): Promise<EngineeringReport> {
   const reportId = `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
   const savedReport: EngineeringReport = {
     ...report,

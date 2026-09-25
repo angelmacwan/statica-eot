@@ -8,20 +8,13 @@ interface NumericInputProps {
   disabled?: boolean;
 }
 
-export const NumericInput: React.FC<NumericInputProps> = ({
-  definition,
-  value,
-  onChange,
-  disabled = false,
-}) => {
+export const NumericInput: React.FC<NumericInputProps> = ({ definition, value, onChange, disabled = false }) => {
   const { label, unit, type, options, description, min, max, step } = definition;
 
   return (
     <div className="flex flex-col gap-1.5 p-3 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-          {label}
-        </label>
+        <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">{label}</label>
         {unit && (
           <span className="text-xs font-mono text-blue-400 bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/40">
             {unit}
@@ -66,9 +59,7 @@ export const NumericInput: React.FC<NumericInputProps> = ({
         />
       )}
 
-      {description && (
-        <p className="text-[11px] text-slate-400 leading-tight mt-0.5">{description}</p>
-      )}
+      {description && <p className="text-[11px] text-slate-400 leading-tight mt-0.5">{description}</p>}
     </div>
   );
 };

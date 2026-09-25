@@ -23,6 +23,8 @@ import { longTravelGearbox } from './mechanism/longTravelGearbox';
 
 import { crabWeight } from './mechanism/crabWeight';
 import { wheelRailHardness } from './mechanism/wheelRailHardness';
+import { outdoorCraneStub } from './mechanism/outdoorCraneStub';
+import { craneCategoryLookup } from './mechanism/craneCategoryLookup';
 
 import { boxBeamProperties } from './structural/boxBeamProperties';
 import { bendingMoment } from './structural/bendingMoment';
@@ -52,12 +54,16 @@ export const CORE_TOOLS: CalculationToolDefinition[] = [
 
   crabWeight,
   wheelRailHardness,
+  craneCategoryLookup,
 
   // Tier B: Structural Suite (Gated for Engineering Review)
   boxBeamProperties,
   bendingMoment,
   gantryGirder,
   gantryLeg,
+
+  // Tier C: Stubs added to core registry (source available, not implemented)
+  outdoorCraneStub,
 ];
 
 // Tier C legacy tool definitions

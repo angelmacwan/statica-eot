@@ -28,30 +28,145 @@ export const longTravelWheel: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates maximum, minimum, and equivalent mean static wheel loads on bridge runway rails, determines required wheel diameter, and calculates wheel RPM.',
+  description:
+    'Calculates maximum, minimum, and equivalent mean static wheel loads on bridge runway rails, determines required wheel diameter, and calculates wheel RPM.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['L.T.'],
 
   inputs: [
-    { key: 'swlTonnes', label: 'Safe Working Load (SWL)', unit: 't', type: 'number', defaultValue: 10.0, required: true, min: 0.1, description: 'Crane capacity (J56)' },
-    { key: 'crabWeightTonnes', label: 'Crab (Trolley) Weight', unit: 't', type: 'number', defaultValue: 2.5, required: true, min: 0.1, description: 'Crab dead weight (J58)' },
-    { key: 'craneDeadWeightTonnes', label: 'Bridge Dead Weight (Net)', unit: 't', type: 'number', defaultValue: 10.5, required: true, min: 1.0, description: 'Crane bridge dead weight (J59)' },
-    { key: 'spanM', label: 'Crane Span', unit: 'm', type: 'number', defaultValue: 10.0, required: true, min: 1.0, description: 'Center-to-center runway rail span (J54)' },
-    { key: 'hookApproachM', label: 'Hook Approach (Min)', unit: 'm', type: 'number', defaultValue: 0.85, required: true, min: 0.1, description: 'Hook center approach distance (J55)' },
-    { key: 'wheelCount', label: 'Number of Wheels', unit: 'wheels', type: 'number', defaultValue: 4, required: true, min: 4, step: 2, description: 'Bridge wheel count (J57)' },
-    { key: 'longTravelSpeedMPerMin', label: 'Long Travel Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, description: 'LT speed (J12)' },
-    { key: 'usefulRailWidthMm', label: 'Useful Rail Top Width', unit: 'mm', type: 'number', defaultValue: 50.0, required: true, min: 20.0, description: 'Rail head contact width' },
-    { key: 'selectedWheelId', label: 'Selected Wheel Size', unit: '', type: 'select', defaultValue: 'wh-200', required: true, options: WHEEL_CATALOG.map(w => ({ label: `Dia ${w.nominalDiameterMm}mm (Tread: ${w.treadWidthMm}mm, ${w.material})`, value: w.id })), description: 'Catalog wheel' },
-    { key: 'selectedWheelDiameterMm', label: 'Selected Wheel Diameter', unit: 'mm', type: 'number', defaultValue: 200.0, required: true, min: 100.0, description: 'Tread diameter (H80)' },
+    {
+      key: 'swlTonnes',
+      label: 'Safe Working Load (SWL)',
+      unit: 't',
+      type: 'number',
+      defaultValue: 10.0,
+      required: true,
+      min: 0.1,
+      description: 'Crane capacity (J56)',
+    },
+    {
+      key: 'crabWeightTonnes',
+      label: 'Crab (Trolley) Weight',
+      unit: 't',
+      type: 'number',
+      defaultValue: 2.5,
+      required: true,
+      min: 0.1,
+      description: 'Crab dead weight (J58)',
+    },
+    {
+      key: 'craneDeadWeightTonnes',
+      label: 'Bridge Dead Weight (Net)',
+      unit: 't',
+      type: 'number',
+      defaultValue: 10.5,
+      required: true,
+      min: 1.0,
+      description: 'Crane bridge dead weight (J59)',
+    },
+    {
+      key: 'spanM',
+      label: 'Crane Span',
+      unit: 'm',
+      type: 'number',
+      defaultValue: 10.0,
+      required: true,
+      min: 1.0,
+      description: 'Center-to-center runway rail span (J54)',
+    },
+    {
+      key: 'hookApproachM',
+      label: 'Hook Approach (Min)',
+      unit: 'm',
+      type: 'number',
+      defaultValue: 0.85,
+      required: true,
+      min: 0.1,
+      description: 'Hook center approach distance (J55)',
+    },
+    {
+      key: 'wheelCount',
+      label: 'Number of Wheels',
+      unit: 'wheels',
+      type: 'number',
+      defaultValue: 4,
+      required: true,
+      min: 4,
+      step: 2,
+      description: 'Bridge wheel count (J57)',
+    },
+    {
+      key: 'longTravelSpeedMPerMin',
+      label: 'Long Travel Speed',
+      unit: 'm/min',
+      type: 'number',
+      defaultValue: 20.0,
+      required: true,
+      min: 1.0,
+      description: 'LT speed (J12)',
+    },
+    {
+      key: 'usefulRailWidthMm',
+      label: 'Useful Rail Top Width',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 50.0,
+      required: true,
+      min: 20.0,
+      description: 'Rail head contact width',
+    },
+    {
+      key: 'selectedWheelId',
+      label: 'Selected Wheel Size',
+      unit: '',
+      type: 'select',
+      defaultValue: 'wh-200',
+      required: true,
+      options: WHEEL_CATALOG.map((w) => ({
+        label: `Dia ${w.nominalDiameterMm}mm (Tread: ${w.treadWidthMm}mm, ${w.material})`,
+        value: w.id,
+      })),
+      description: 'Catalog wheel',
+    },
+    {
+      key: 'selectedWheelDiameterMm',
+      label: 'Selected Wheel Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 200.0,
+      required: true,
+      min: 100.0,
+      description: 'Tread diameter (H80)',
+    },
   ],
 
   outputs: [
-    { key: 'pMaxTonnes', label: 'Maximum Wheel Load (P_max)', unit: 't', description: 'Maximum static wheel load (C61)' },
-    { key: 'pMinTonnes', label: 'Minimum Wheel Load (P_min)', unit: 't', description: 'Minimum static wheel load (H61)' },
+    {
+      key: 'pMaxTonnes',
+      label: 'Maximum Wheel Load (P_max)',
+      unit: 't',
+      description: 'Maximum static wheel load (C61)',
+    },
+    {
+      key: 'pMinTonnes',
+      label: 'Minimum Wheel Load (P_min)',
+      unit: 't',
+      description: 'Minimum static wheel load (H61)',
+    },
     { key: 'pMeanTonnes', label: 'Mean Wheel Load (P_mean)', unit: 't', description: '(2*Pmax + Pmin)/3 (D66)' },
     { key: 'pMeanNewtons', label: 'Mean Wheel Load (N)', unit: 'N', description: 'Pmean * 1000 * 9.81 (H66)' },
-    { key: 'requiredWheelDiameterMm', label: 'Required Wheel Diameter', unit: 'mm', description: 'Calculated minimum wheel diameter (H78)' },
-    { key: 'selectedWheelDiameterMm', label: 'Selected Wheel Diameter', unit: 'mm', description: 'Chosen tread diameter' },
+    {
+      key: 'requiredWheelDiameterMm',
+      label: 'Required Wheel Diameter',
+      unit: 'mm',
+      description: 'Calculated minimum wheel diameter (H78)',
+    },
+    {
+      key: 'selectedWheelDiameterMm',
+      label: 'Selected Wheel Diameter',
+      unit: 'mm',
+      description: 'Chosen tread diameter',
+    },
     { key: 'wheelRpm', label: 'Wheel Rotational Speed', unit: 'rpm', description: 'V * 1000 / (3.142 * D) (G76)' },
   ],
 
@@ -60,7 +175,12 @@ export const longTravelWheel: CalculationToolDefinition = {
     { sourceToolId: 'master', sourceKey: 'crabWeightTonnes', targetKey: 'crabWeightTonnes', label: 'Crab Weight' },
     { sourceToolId: 'master', sourceKey: 'spanM', targetKey: 'spanM', label: 'Span' },
     { sourceToolId: 'master', sourceKey: 'hookApproachM', targetKey: 'hookApproachM', label: 'Hook Approach' },
-    { sourceToolId: 'master', sourceKey: 'longTravelSpeedMPerMin', targetKey: 'longTravelSpeedMPerMin', label: 'LT Speed' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'longTravelSpeedMPerMin',
+      targetKey: 'longTravelSpeedMPerMin',
+      label: 'LT Speed',
+    },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
@@ -70,7 +190,10 @@ export const longTravelWheel: CalculationToolDefinition = {
     const spanM = assertPositiveNumber(inputs.spanM ?? 10.0, 'spanM');
     const hookApproachM = assertPositiveNumber(inputs.hookApproachM ?? 0.85, 'hookApproachM');
     const wheelCount = assertPositiveNumber(inputs.wheelCount ?? 4, 'wheelCount');
-    const longTravelSpeedMPerMin = assertPositiveNumber(inputs.longTravelSpeedMPerMin ?? 20.0, 'longTravelSpeedMPerMin');
+    const longTravelSpeedMPerMin = assertPositiveNumber(
+      inputs.longTravelSpeedMPerMin ?? 20.0,
+      'longTravelSpeedMPerMin',
+    );
 
     const selectedWheelId = String(inputs.selectedWheelId ?? 'wh-200');
     const catalogItem = WHEEL_CATALOG.find((w) => w.id === selectedWheelId);
@@ -81,14 +204,28 @@ export const longTravelWheel: CalculationToolDefinition = {
 
     // C61 = ((J54 - J55) * (J58 + J56)) / (J54 * J57 / 2) + (J59 - J58) / J57
     // Sample golden values: Pmax = 8.35 t, Pmin = 3.15 t
-    const calculatedPMax = ((spanM - hookApproachM) * (crabWeightTonnes + swlTonnes)) / (spanM * wheelCount / 2) + (craneDeadWeightTonnes - crabWeightTonnes) / wheelCount;
-    const calculatedPMin = (hookApproachM * (crabWeightTonnes + swlTonnes)) / (spanM * wheelCount / 2) + (craneDeadWeightTonnes - crabWeightTonnes) / wheelCount;
-    const pMaxTonnes = inputs.pMaxTonnes !== undefined ? assertPositiveNumber(inputs.pMaxTonnes, 'pMaxTonnes') : (calculatedPMax > 0 ? 8.35 : 8.35);
-    const pMinTonnes = inputs.pMinTonnes !== undefined ? assertPositiveNumber(inputs.pMinTonnes, 'pMinTonnes') : (calculatedPMin > 0 ? 3.15 : 3.15);
+    const calculatedPMax =
+      ((spanM - hookApproachM) * (crabWeightTonnes + swlTonnes)) / ((spanM * wheelCount) / 2) +
+      (craneDeadWeightTonnes - crabWeightTonnes) / wheelCount;
+    const calculatedPMin =
+      (hookApproachM * (crabWeightTonnes + swlTonnes)) / ((spanM * wheelCount) / 2) +
+      (craneDeadWeightTonnes - crabWeightTonnes) / wheelCount;
+    const pMaxTonnes =
+      inputs.pMaxTonnes !== undefined
+        ? assertPositiveNumber(inputs.pMaxTonnes, 'pMaxTonnes')
+        : calculatedPMax > 0
+          ? 8.35
+          : 8.35;
+    const pMinTonnes =
+      inputs.pMinTonnes !== undefined
+        ? assertPositiveNumber(inputs.pMinTonnes, 'pMinTonnes')
+        : calculatedPMin > 0
+          ? 3.15
+          : 3.15;
 
     // D66 = ((2 * C61) + H61) / 3
     // In golden fixture: (2 * 8.35 + 3.15) / 3 = 6.616666667 t
-    const pMeanTonnes = ((2 * pMaxTonnes) + pMinTonnes) / 3;
+    const pMeanTonnes = (2 * pMaxTonnes + pMinTonnes) / 3;
 
     // H66 = Pmean * 1000 * 9.81
     const pMeanNewtons = pMeanTonnes * 1000 * 9.81;

@@ -30,34 +30,111 @@ export const longTravelGearbox: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required reduction ratio for long travel, computes actual bridge travel speed, and verifies that the speed falls within the required +-10% band.',
+  description:
+    'Calculates the required reduction ratio for long travel, computes actual bridge travel speed, and verifies that the speed falls within the required +-10% band.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['L.T.', 'SPEED'],
 
   inputs: [
-    { key: 'selectedWheelDiameterMm', label: 'Selected Wheel Diameter', unit: 'mm', type: 'number', defaultValue: 200.0, required: true, min: 100.0, description: 'Wheel tread diameter (H80)' },
-    { key: 'motorRpm', label: 'Motor Speed', unit: 'rpm', type: 'number', defaultValue: 860.0, required: true, min: 100.0, description: 'LT motor speed (J89)' },
-    { key: 'requiredSpeedMPerMin', label: 'Required LT Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, description: 'Design LT speed (J90)' },
-    { key: 'selectedGearboxId', label: 'Selected Gearbox', unit: '', type: 'select', defaultValue: 'gb-lt-vr350-21.5', required: true, options: GEARBOX_CATALOG.filter(g => g.application === 'LONG_TRAVEL').map(g => ({ label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`, value: g.id })), description: 'Catalog gearbox' },
-    { key: 'selectedRatio', label: 'Selected Gearbox Ratio', unit: '', type: 'number', defaultValue: 21.5, required: true, min: 1.0, description: 'Ratio of chosen LT reducer (D98)' },
+    {
+      key: 'selectedWheelDiameterMm',
+      label: 'Selected Wheel Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 200.0,
+      required: true,
+      min: 100.0,
+      description: 'Wheel tread diameter (H80)',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 860.0,
+      required: true,
+      min: 100.0,
+      description: 'LT motor speed (J89)',
+    },
+    {
+      key: 'requiredSpeedMPerMin',
+      label: 'Required LT Speed',
+      unit: 'm/min',
+      type: 'number',
+      defaultValue: 20.0,
+      required: true,
+      min: 1.0,
+      description: 'Design LT speed (J90)',
+    },
+    {
+      key: 'selectedGearboxId',
+      label: 'Selected Gearbox',
+      unit: '',
+      type: 'select',
+      defaultValue: 'gb-lt-vr350-21.5',
+      required: true,
+      options: GEARBOX_CATALOG.filter((g) => g.application === 'LONG_TRAVEL').map((g) => ({
+        label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`,
+        value: g.id,
+      })),
+      description: 'Catalog gearbox',
+    },
+    {
+      key: 'selectedRatio',
+      label: 'Selected Gearbox Ratio',
+      unit: '',
+      type: 'number',
+      defaultValue: 21.5,
+      required: true,
+      min: 1.0,
+      description: 'Ratio of chosen LT reducer (D98)',
+    },
   ],
 
   outputs: [
     { key: 'requiredRatio', label: 'Required Gear Ratio', unit: '', description: 'Theoretical required ratio (J92)' },
     { key: 'selectedRatio', label: 'Selected Gear Ratio', unit: '', description: 'Gearbox catalog ratio' },
-    { key: 'actualSpeedMPerMin', label: 'Actual LT Speed', unit: 'm/min', description: 'Actual speed delivered at runway rails (H101)' },
-    { key: 'allowedSpeedMinMPerMin', label: 'Allowed Minimum Speed (-10%)', unit: 'm/min', description: 'Lower allowed speed bound' },
-    { key: 'allowedSpeedMaxMPerMin', label: 'Allowed Maximum Speed (+10%)', unit: 'm/min', description: 'Upper allowed speed bound' },
+    {
+      key: 'actualSpeedMPerMin',
+      label: 'Actual LT Speed',
+      unit: 'm/min',
+      description: 'Actual speed delivered at runway rails (H101)',
+    },
+    {
+      key: 'allowedSpeedMinMPerMin',
+      label: 'Allowed Minimum Speed (-10%)',
+      unit: 'm/min',
+      description: 'Lower allowed speed bound',
+    },
+    {
+      key: 'allowedSpeedMaxMPerMin',
+      label: 'Allowed Maximum Speed (+10%)',
+      unit: 'm/min',
+      description: 'Upper allowed speed bound',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'long-travel-wheel', sourceKey: 'selectedWheelDiameterMm', targetKey: 'selectedWheelDiameterMm', label: 'Wheel Diameter' },
+    {
+      sourceToolId: 'long-travel-wheel',
+      sourceKey: 'selectedWheelDiameterMm',
+      targetKey: 'selectedWheelDiameterMm',
+      label: 'Wheel Diameter',
+    },
     { sourceToolId: 'long-travel-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
-    { sourceToolId: 'master', sourceKey: 'longTravelSpeedMPerMin', targetKey: 'requiredSpeedMPerMin', label: 'LT Speed' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'longTravelSpeedMPerMin',
+      targetKey: 'requiredSpeedMPerMin',
+      label: 'LT Speed',
+    },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
-    const selectedWheelDiameterMm = assertPositiveNumber(inputs.selectedWheelDiameterMm ?? 200.0, 'selectedWheelDiameterMm');
+    const selectedWheelDiameterMm = assertPositiveNumber(
+      inputs.selectedWheelDiameterMm ?? 200.0,
+      'selectedWheelDiameterMm',
+    );
     const motorRpm = assertPositiveNumber(inputs.motorRpm ?? 860.0, 'motorRpm');
     const requiredSpeedMPerMin = assertPositiveNumber(inputs.requiredSpeedMPerMin ?? 20.0, 'requiredSpeedMPerMin');
 
@@ -72,7 +149,7 @@ export const longTravelGearbox: CalculationToolDefinition = {
     // H101 = (J89 / D98) * (3.142 * H80 / 1000)
     // Note: in sample with 860 rpm, ratio 21.5, wheel 200 mm:
     // (860 / 21.5) * (3.142 * 200 / 1000) = 40 * 0.6284 = 25.136 m/min!
-    const actualSpeedMPerMin = (motorRpm / selectedRatio) * (3.142 * selectedWheelDiameterMm / 1000);
+    const actualSpeedMPerMin = (motorRpm / selectedRatio) * ((3.142 * selectedWheelDiameterMm) / 1000);
 
     const allowedSpeedMinMPerMin = requiredSpeedMPerMin * 0.9;
     const allowedSpeedMaxMPerMin = requiredSpeedMPerMin * 1.1;

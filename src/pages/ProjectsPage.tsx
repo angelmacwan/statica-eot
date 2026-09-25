@@ -67,9 +67,10 @@ export const ProjectsPage: React.FC = () => {
     }
   };
 
-  const filteredProjects = projects.filter((p) =>
-    p.projectName.toLowerCase().includes(search.toLowerCase()) ||
-    (p.description && p.description.toLowerCase().includes(search.toLowerCase())),
+  const filteredProjects = projects.filter(
+    (p) =>
+      p.projectName.toLowerCase().includes(search.toLowerCase()) ||
+      (p.description && p.description.toLowerCase().includes(search.toLowerCase())),
   );
 
   return (
@@ -151,9 +152,7 @@ export const ProjectsPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white group-hover:text-blue-300 transition">
-                    {p.projectName}
-                  </h3>
+                  <h3 className="text-sm font-bold text-white group-hover:text-blue-300 transition">{p.projectName}</h3>
                   <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                     {p.description || 'No description provided.'}
                   </p>
@@ -178,9 +177,7 @@ export const ProjectsPage: React.FC = () => {
           <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
               <h2 className="text-base font-bold text-white mb-1">Create New Project</h2>
-              <p className="text-xs text-slate-400 mb-5">
-                Set up a crane engineering design project.
-              </p>
+              <p className="text-xs text-slate-400 mb-5">Set up a crane engineering design project.</p>
 
               <form onSubmit={handleCreateProject} className="space-y-4">
                 <div>

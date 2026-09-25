@@ -52,7 +52,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
   };
 
   const config = getBadgeConfig();
-  const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs' : size === 'lg' ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
+  const sizeClasses =
+    size === 'sm' ? 'px-2 py-0.5 text-xs' : size === 'lg' ? 'px-3 py-1.5 text-sm' : 'px-2.5 py-1 text-xs';
 
   return (
     <span

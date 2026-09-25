@@ -6,12 +6,7 @@ import { getToolDefinition } from '../engine/registry';
 import { Navbar } from '../components/layout/Navbar';
 import { StatusBadge } from '../components/engineering/StatusBadge';
 import { CheckTable } from '../components/engineering/CheckTable';
-import {
-  ArrowLeft,
-  Printer,
-  CheckSquare,
-  Square,
-} from 'lucide-react';
+import { ArrowLeft, Printer, CheckSquare, Square } from 'lucide-react';
 
 export const ReportBuilderPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -142,11 +137,10 @@ export const ReportBuilderPage: React.FC = () => {
               <div className="text-[11px] font-mono tracking-widest uppercase text-blue-400 print:text-blue-700 font-semibold mb-1">
                 ENGINEERING DESIGN CALCULATION REPORT
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-white print:text-black">
-                {project.projectName}
-              </h1>
+              <h1 className="text-2xl font-bold tracking-tight text-white print:text-black">{project.projectName}</h1>
               <div className="text-xs text-slate-400 print:text-slate-600 mt-1">
-                by <strong className="text-slate-200 print:text-slate-800">StaticaLabs EOT Crane Engineering</strong> · eot.staticalabs.com
+                by <strong className="text-slate-200 print:text-slate-800">StaticaLabs EOT Crane Engineering</strong> ·
+                eot.staticalabs.com
               </div>
             </div>
 
@@ -275,9 +269,7 @@ export const ReportBuilderPage: React.FC = () => {
                             key={i}
                             className="p-2.5 bg-slate-900/80 print:bg-slate-50 rounded border border-slate-800/80 print:border-slate-200"
                           >
-                            <div className="font-semibold text-slate-300 print:text-slate-800 mb-1">
-                              {st.label}
-                            </div>
+                            <div className="font-semibold text-slate-300 print:text-slate-800 mb-1">{st.label}</div>
                             <div className="font-mono text-blue-300 print:text-blue-800 text-[11px] mb-1">
                               Formula: {st.formulaText}
                             </div>
@@ -302,13 +294,9 @@ export const ReportBuilderPage: React.FC = () => {
                             key={k}
                             className="p-2 bg-slate-900/90 print:bg-slate-100 rounded border border-slate-800 print:border-slate-200"
                           >
-                            <span className="text-[10px] text-slate-500 block truncate">
-                              {val.label || k}
-                            </span>
+                            <span className="text-[10px] text-slate-500 block truncate">{val.label || k}</span>
                             <span className="text-white print:text-black font-bold">
-                              {typeof val.value === 'number'
-                                ? val.value.toFixed(4)
-                                : String(val.value)}{' '}
+                              {typeof val.value === 'number' ? val.value.toFixed(4) : String(val.value)}{' '}
                               {val.unit || ''}
                             </span>
                           </div>
@@ -334,10 +322,13 @@ export const ReportBuilderPage: React.FC = () => {
           {/* Footer & Disclaimer */}
           <div className="border-t border-slate-800 print:border-slate-300 pt-6 text-[10px] text-slate-500 print:text-slate-500 space-y-1">
             <p>
-              This calculation report was generated deterministically by the StaticaLabs EOT Crane Engineering Platform (Engine version {project.calculationEngineVersion}).
+              This calculation report was generated deterministically by the StaticaLabs EOT Crane Engineering Platform
+              (Engine version {project.calculationEngineVersion}).
             </p>
             <p>
-              All mechanism calculations derive from verified source workbooks conforming to IS 3177 and IS 807. Any items designated with "Engineering Review Required" must be independently checked and approved by a certified professional structural/mechanical engineer prior to fabrication.
+              All mechanism calculations derive from verified source workbooks conforming to IS 3177 and IS 807. Any
+              items designated with "Engineering Review Required" must be independently checked and approved by a
+              certified professional structural/mechanical engineer prior to fabrication.
             </p>
           </div>
         </div>

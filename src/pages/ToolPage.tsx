@@ -9,11 +9,7 @@ import { NumericInput } from '../components/engineering/NumericInput';
 import { StatusBadge } from '../components/engineering/StatusBadge';
 import { CheckTable } from '../components/engineering/CheckTable';
 import { CalculationTraceView } from '../components/engineering/CalculationTraceView';
-import {
-  ArrowLeft,
-  Save,
-  FileSpreadsheet,
-} from 'lucide-react';
+import { ArrowLeft, Save, FileSpreadsheet } from 'lucide-react';
 
 export const ToolPage: React.FC = () => {
   const { projectId, toolInstanceId } = useParams<{ projectId: string; toolInstanceId: string }>();
@@ -100,9 +96,7 @@ export const ToolPage: React.FC = () => {
       const freshResult = toolDef.calculate(inputs);
       setResult(freshResult);
 
-      const outputs = Object.fromEntries(
-        Object.entries(freshResult.outputs).map(([k, v]) => [k, v.value]),
-      );
+      const outputs = Object.fromEntries(Object.entries(freshResult.outputs).map(([k, v]) => [k, v.value]));
 
       await updateToolInstance(projectId, toolInstanceId, {
         inputs,
@@ -185,17 +179,13 @@ export const ToolPage: React.FC = () => {
                   {toolDef.category}
                 </span>
                 <StatusBadge status={toolDef.reviewStatus} size="sm" />
-                <span className="text-[10px] font-mono text-slate-400">
-                  Version {toolDef.version}
-                </span>
+                <span className="text-[10px] font-mono text-slate-400">Version {toolDef.version}</span>
               </div>
               <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
                 {toolDef.name}
                 {result && <StatusBadge status={isStale ? 'WARNING' : result.status} size="md" />}
               </h1>
-              <p className="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">
-                {toolDef.description}
-              </p>
+              <p className="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">{toolDef.description}</p>
             </div>
 
             <div className="flex flex-col items-start md:items-end gap-1.5 text-xs text-slate-400">
@@ -203,9 +193,7 @@ export const ToolPage: React.FC = () => {
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
                 {toolDef.sourceWorkbook}
               </span>
-              <span className="text-[10px] text-slate-500">
-                Sheets: {toolDef.sourceSheets.join(', ')}
-              </span>
+              <span className="text-[10px] text-slate-500">Sheets: {toolDef.sourceSheets.join(', ')}</span>
             </div>
           </div>
 
@@ -231,9 +219,7 @@ export const ToolPage: React.FC = () => {
             </div>
           )}
 
-          {syncSuccess && (
-            <div className="mt-2 text-xs text-emerald-400 font-medium">✓ {syncSuccess}</div>
-          )}
+          {syncSuccess && <div className="mt-2 text-xs text-emerald-400 font-medium">✓ {syncSuccess}</div>}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -282,18 +268,12 @@ export const ToolPage: React.FC = () => {
                       key={key}
                       className="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col justify-between"
                     >
-                      <span className="text-[11px] font-medium text-slate-400">
-                        {val.label || key}
-                      </span>
+                      <span className="text-[11px] font-medium text-slate-400">{val.label || key}</span>
                       <div className="flex items-baseline gap-1.5 mt-1">
                         <span className="text-lg font-mono font-bold text-white tracking-tight">
-                          {typeof val.value === 'number'
-                            ? val.value.toFixed(4)
-                            : String(val.value)}
+                          {typeof val.value === 'number' ? val.value.toFixed(4) : String(val.value)}
                         </span>
-                        {val.unit && (
-                          <span className="text-xs font-mono text-blue-400">{val.unit}</span>
-                        )}
+                        {val.unit && <span className="text-xs font-mono text-blue-400">{val.unit}</span>}
                       </div>
                     </div>
                   ))}
@@ -322,10 +302,7 @@ export const ToolPage: React.FC = () => {
                 )}
 
                 {/* Calculation Trace View */}
-                <CalculationTraceView
-                  steps={result.steps}
-                  sourceLineage={result.sourceLineage}
-                />
+                <CalculationTraceView steps={result.steps} sourceLineage={result.sourceLineage} />
               </div>
             )}
           </div>

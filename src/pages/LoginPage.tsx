@@ -40,14 +40,18 @@ export const LoginPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              StaticaLabs <span className="text-blue-400 font-mono text-sm px-1.5 py-0.5 rounded bg-blue-950 border border-blue-800/40">EOT</span>
+              StaticaLabs{' '}
+              <span className="text-blue-400 font-mono text-sm px-1.5 py-0.5 rounded bg-blue-950 border border-blue-800/40">
+                EOT
+              </span>
             </h1>
             <p className="text-xs text-slate-400">Crane Engineering Calculation Platform</p>
           </div>
         </div>
 
         <p className="text-sm text-slate-300 mb-6 leading-relaxed">
-          Deterministic, verifiable structural and mechanical calculations for industrial overhead travelling and gantry cranes conforming to IS 3177 / IS 807.
+          Deterministic, verifiable structural and mechanical calculations for industrial overhead travelling and gantry
+          cranes conforming to IS 3177 / IS 807.
         </p>
 
         <div className="space-y-2.5 mb-8 text-xs text-slate-300 bg-slate-950/60 p-4 rounded-xl border border-slate-800">

@@ -1,12 +1,6 @@
-export type StandardSourceType =
-  | 'workbook-note'
-  | 'engineering-reviewed'
-  | 'current-bis-reference';
+export type StandardSourceType = 'workbook-note' | 'engineering-reviewed' | 'current-bis-reference';
 
-export type StandardReviewStatus =
-  | 'legacy-source'
-  | 'review-required'
-  | 'validated';
+export type StandardReviewStatus = 'legacy-source' | 'review-required' | 'validated';
 
 export interface StandardReference {
   standard: string;
@@ -50,10 +44,7 @@ export interface CalculationStep {
   sourceCell?: string;
 }
 
-export type SourceReliabilityStatus =
-  | 'SOURCE_VERIFIED_XLSX'
-  | 'SOURCE_PARTIAL_XLS'
-  | 'SOURCE_NOT_AVAILABLE';
+export type SourceReliabilityStatus = 'SOURCE_VERIFIED_XLSX' | 'SOURCE_PARTIAL_XLS' | 'SOURCE_NOT_AVAILABLE';
 
 export interface SourceLineage {
   workbook: string;
@@ -109,16 +100,12 @@ export interface OutputDefinition {
 
 export interface ToolDependency {
   sourceToolId: string; // e.g. "master" or "main-hoist-motor"
-  sourceKey: string;    // e.g. "swl" or "requiredMotorKW"
-  targetKey: string;    // e.g. "swl" or "motorPowerKW"
+  sourceKey: string; // e.g. "swl" or "requiredMotorKW"
+  targetKey: string; // e.g. "swl" or "motorPowerKW"
   label: string;
 }
 
-export type ToolCategory =
-  | 'MECHANISM'
-  | 'STRUCTURAL'
-  | 'CATALOG'
-  | 'LEGACY_INVENTORY';
+export type ToolCategory = 'MECHANISM' | 'STRUCTURAL' | 'CATALOG' | 'LEGACY_INVENTORY';
 
 export type ToolTier = 'A' | 'B' | 'C';
 
@@ -128,7 +115,8 @@ export type EngineeringReviewStatus =
   | 'TESTED'
   | 'ENGINEERING REVIEW REQUIRED'
   | 'ENGINEERING REVIEWED'
-  | 'PRODUCTION';
+  | 'PRODUCTION'
+  | 'NOT IMPLEMENTED';
 
 export interface CalculationToolDefinition {
   id: string;

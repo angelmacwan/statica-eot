@@ -30,21 +30,90 @@ export const longTravelBrake: CalculationToolDefinition = {
   sourceSheets: ['L.T.', 'BRAKE SOC'],
 
   inputs: [
-    { key: 'requiredMotorKw', label: 'LT Motor Power', unit: 'kW', type: 'number', defaultValue: 0.5990938154, required: true, min: 0.05, description: 'Motor power from LT Motor tool' },
-    { key: 'deratingFactor', label: 'Derating Factor (J16)', unit: '', type: 'number', defaultValue: 0.95, required: true, min: 0.5, max: 1.0, description: 'Motor derating factor' },
-    { key: 'motorRpm', label: 'Motor Speed (RPM)', unit: 'rpm', type: 'number', defaultValue: 860, required: true, min: 100, description: 'Motor speed (F28 / J40)' },
-    { key: 'selectedBrakeId', label: 'Selected Brake Model', unit: '', type: 'select', defaultValue: 'mdt-100-18', required: true, options: BRAKE_CATALOG.map(b => ({ label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`, value: b.id })), description: 'Catalog brake' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', type: 'number', defaultValue: 6.0, required: true, min: 0.1, description: 'Selected brake rated torque' },
+    {
+      key: 'requiredMotorKw',
+      label: 'LT Motor Power',
+      unit: 'kW',
+      type: 'number',
+      defaultValue: 0.5990938154,
+      required: true,
+      min: 0.05,
+      description: 'Motor power from LT Motor tool',
+    },
+    {
+      key: 'deratingFactor',
+      label: 'Derating Factor (J16)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.95,
+      required: true,
+      min: 0.5,
+      max: 1.0,
+      description: 'Motor derating factor',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed (RPM)',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 860,
+      required: true,
+      min: 100,
+      description: 'Motor speed (F28 / J40)',
+    },
+    {
+      key: 'selectedBrakeId',
+      label: 'Selected Brake Model',
+      unit: '',
+      type: 'select',
+      defaultValue: 'mdt-100-18',
+      required: true,
+      options: BRAKE_CATALOG.map((b) => ({
+        label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`,
+        value: b.id,
+      })),
+      description: 'Catalog brake',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      type: 'number',
+      defaultValue: 6.0,
+      required: true,
+      min: 0.1,
+      description: 'Selected brake rated torque',
+    },
   ],
 
   outputs: [
-    { key: 'requiredBrakeTorqueKgm', label: 'Required Brake Torque (kg-m)', unit: 'kg-m', description: 'Calculated holding torque in kg-m (F42)' },
-    { key: 'requiredBrakeTorqueNm', label: 'Required Brake Torque (N-m)', unit: 'N-m', description: 'Calculated holding torque in N-m (I42)' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', description: 'Torque rating of selected brake' },
+    {
+      key: 'requiredBrakeTorqueKgm',
+      label: 'Required Brake Torque (kg-m)',
+      unit: 'kg-m',
+      description: 'Calculated holding torque in kg-m (F42)',
+    },
+    {
+      key: 'requiredBrakeTorqueNm',
+      label: 'Required Brake Torque (N-m)',
+      unit: 'N-m',
+      description: 'Calculated holding torque in N-m (I42)',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      description: 'Torque rating of selected brake',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'long-travel-motor', sourceKey: 'requiredMotorKw', targetKey: 'requiredMotorKw', label: 'LT Motor Power' },
+    {
+      sourceToolId: 'long-travel-motor',
+      sourceKey: 'requiredMotorKw',
+      targetKey: 'requiredMotorKw',
+      label: 'LT Motor Power',
+    },
     { sourceToolId: 'long-travel-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
   ],
 
@@ -61,6 +130,8 @@ export const longTravelBrake: CalculationToolDefinition = {
     );
 
     // F42 = 975 * (H23 * J16) / J40
+    // NOTE (BKL-002): LT brake does not apply a brakeFactor denominator, unlike CT brake (brakeFactor=1.06).
+    // Golden value 0.6452449378 kg-m verified. Formula difference vs CT sheet is confirmed by regression.
     const requiredBrakeTorqueKgm = (975 * (requiredMotorKw * deratingFactor)) / motorRpm;
 
     // I42 = F42 * 9.80665

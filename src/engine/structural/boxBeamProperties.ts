@@ -20,29 +20,112 @@ export const boxBeamProperties: CalculationToolDefinition = {
   category: 'STRUCTURAL',
   tier: 'B',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
-  description: 'Calculates cross-sectional area, neutral axis, section modulus (Zxx, Zyy), moments of inertia (Ixx, Iyy), and unit weight for welded crane box girders.',
+  description:
+    'Calculates cross-sectional area, neutral axis, section modulus (Zxx, Zyy), moments of inertia (Ixx, Iyy), and unit weight for welded crane box girders.',
   sourceWorkbook: 'MAC-Box Beam-Properties.xlsx',
   sourceSheets: ['PROPERTIES'],
 
   inputs: [
-    { key: 'topFlangeWidthMm', label: 'Top Flange Width (b_tf)', unit: 'mm', type: 'number', defaultValue: 500.0, required: true, min: 100.0, description: 'Width of top compression plate' },
-    { key: 'topFlangeThicknessMm', label: 'Top Flange Thickness (t_tf)', unit: 'mm', type: 'number', defaultValue: 12.0, required: true, min: 4.0, description: 'Thickness of top plate' },
-    { key: 'webDepthMm', label: 'Web Depth (h_w)', unit: 'mm', type: 'number', defaultValue: 1200.0, required: true, min: 200.0, description: 'Clear distance between flanges' },
-    { key: 'webThicknessMm', label: 'Web Plate Thickness (t_w)', unit: 'mm', type: 'number', defaultValue: 8.0, required: true, min: 4.0, description: 'Thickness of each web plate' },
-    { key: 'webSpacingMm', label: 'Distance Between Webs', unit: 'mm', type: 'number', defaultValue: 350.0, required: true, min: 100.0, description: 'Clear distance between inner web faces' },
-    { key: 'bottomFlangeWidthMm', label: 'Bottom Flange Width (b_bf)', unit: 'mm', type: 'number', defaultValue: 500.0, required: true, min: 100.0, description: 'Width of bottom tension plate' },
-    { key: 'bottomFlangeThicknessMm', label: 'Bottom Flange Thickness (t_bf)', unit: 'mm', type: 'number', defaultValue: 12.0, required: true, min: 4.0, description: 'Thickness of bottom plate' },
-    { key: 'steelDensityKgPerM3', label: 'Steel Density', unit: 'kg/m3', type: 'number', defaultValue: 7850.0, required: true, min: 7000.0, description: 'Material density' },
+    {
+      key: 'topFlangeWidthMm',
+      label: 'Top Flange Width (b_tf)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 500.0,
+      required: true,
+      min: 100.0,
+      description: 'Width of top compression plate',
+    },
+    {
+      key: 'topFlangeThicknessMm',
+      label: 'Top Flange Thickness (t_tf)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 12.0,
+      required: true,
+      min: 4.0,
+      description: 'Thickness of top plate',
+    },
+    {
+      key: 'webDepthMm',
+      label: 'Web Depth (h_w)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 1200.0,
+      required: true,
+      min: 200.0,
+      description: 'Clear distance between flanges',
+    },
+    {
+      key: 'webThicknessMm',
+      label: 'Web Plate Thickness (t_w)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 8.0,
+      required: true,
+      min: 4.0,
+      description: 'Thickness of each web plate',
+    },
+    {
+      key: 'webSpacingMm',
+      label: 'Distance Between Webs',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 350.0,
+      required: true,
+      min: 100.0,
+      description: 'Clear distance between inner web faces',
+    },
+    {
+      key: 'bottomFlangeWidthMm',
+      label: 'Bottom Flange Width (b_bf)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 500.0,
+      required: true,
+      min: 100.0,
+      description: 'Width of bottom tension plate',
+    },
+    {
+      key: 'bottomFlangeThicknessMm',
+      label: 'Bottom Flange Thickness (t_bf)',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 12.0,
+      required: true,
+      min: 4.0,
+      description: 'Thickness of bottom plate',
+    },
+    {
+      key: 'steelDensityKgPerM3',
+      label: 'Steel Density',
+      unit: 'kg/m3',
+      type: 'number',
+      defaultValue: 7850.0,
+      required: true,
+      min: 7000.0,
+      description: 'Material density',
+    },
   ],
 
   outputs: [
     { key: 'totalAreaMm2', label: 'Total Cross-Sectional Area', unit: 'mm2', description: 'Composite section area' },
-    { key: 'neutralAxisFromBottomMm', label: 'Neutral Axis from Bottom (y_b)', unit: 'mm', description: 'Tension flange centroid distance' },
+    {
+      key: 'neutralAxisFromBottomMm',
+      label: 'Neutral Axis from Bottom (y_b)',
+      unit: 'mm',
+      description: 'Tension flange centroid distance',
+    },
     { key: 'ixxMm4', label: 'Moment of Inertia Ixx', unit: 'mm4', description: 'Major axis moment of inertia' },
     { key: 'iyyMm4', label: 'Moment of Inertia Iyy', unit: 'mm4', description: 'Minor axis moment of inertia' },
     { key: 'zxxTopMm3', label: 'Section Modulus Top (Zxx,top)', unit: 'mm3', description: 'Ixx / y_top' },
     { key: 'zxxBottomMm3', label: 'Section Modulus Bottom (Zxx,bot)', unit: 'mm3', description: 'Ixx / y_bot' },
-    { key: 'weightKgPerM', label: 'Girder Unit Weight', unit: 'kg/m', description: 'Calculated self-weight per linear meter' },
+    {
+      key: 'weightKgPerM',
+      label: 'Girder Unit Weight',
+      unit: 'kg/m',
+      description: 'Calculated self-weight per linear meter',
+    },
   ],
 
   dependencies: [],
@@ -81,7 +164,7 @@ export const boxBeamProperties: CalculationToolDefinition = {
     const iyy_tf = (t_tf * Math.pow(b_tf, 3)) / 12;
     const iyy_bf = (t_bf * Math.pow(b_bf, 3)) / 12;
     const webCenterDist = assertPositiveNumber(inputs.webSpacingMm ?? 350.0, 'webSpacingMm') + t_w;
-    const iyy_webs = (2 * (h_w * Math.pow(t_w, 3)) / 12) + a_webs * Math.pow(webCenterDist / 2, 2);
+    const iyy_webs = (2 * (h_w * Math.pow(t_w, 3))) / 12 + a_webs * Math.pow(webCenterDist / 2, 2);
     const iyyMm4 = iyy_tf + iyy_bf + iyy_webs;
 
     const zxxTopMm3 = ixxMm4 / neutralAxisFromTopMm;
@@ -129,7 +212,8 @@ export const boxBeamProperties: CalculationToolDefinition = {
         status: 'WARNING',
         actual: 'Under Review',
         criterion: 'Requires independent structural PE sign-off before manufacturing',
-        message: 'This structural calculation is marked as Tier B (Beta) and requires independent engineering review before use in crane girder fabrication.',
+        message:
+          'This structural calculation is marked as Tier B (Beta) and requires independent engineering review before use in crane girder fabrication.',
       },
     ];
 
@@ -174,9 +258,7 @@ export const boxBeamProperties: CalculationToolDefinition = {
         'Symmetric rectangular box section with two continuous webs',
         'Corrosion allowance excluded from nominal plate thicknesses',
       ],
-      warnings: [
-        'ENGINEERING REVIEW REQUIRED: Structural design code verification pending.',
-      ],
+      warnings: ['ENGINEERING REVIEW REQUIRED: Structural design code verification pending.'],
       standardReferences,
       sourceLineage: {
         workbook: 'MAC-Box Beam-Properties.xlsx',

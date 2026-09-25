@@ -35,28 +35,28 @@ export interface MasterCraneInputs {
   // Factors from workbook SPECIFICATIONS sheet
   ambientDeratingFactor: number; // C9 in MH (0.95)
   structuralImpactFactor: number;
-  hoistDutyFactor: number;       // C20 (1.5)
-  hoistServiceFactor: number;    // C21 (0.67)
+  hoistDutyFactor: number; // C20 (1.5)
+  hoistServiceFactor: number; // C21 (0.67)
   motorMultiplicityFactor: number; // C23 (1.0)
   numberOfGearboxStages: number; // C24 (3)
   coefficientOfUtilization: number; // C25 (5.25)
-  drumDiameterFactor: number;    // C26 (1.0)
+  drumDiameterFactor: number; // C26 (1.0)
 
   // Cross Travel Factors
   ctDutyFactor: number;
   ctServiceFactor: number;
-  ctTorqueFactor: number;        // 1.2
-  ctFrictionFactor: number;      // 8.0 kg/t
-  ctAcceleration: number;        // 0.15 m/s^2
-  ctMotorMultiplicity: number;   // 1.0
+  ctTorqueFactor: number; // 1.2
+  ctFrictionFactor: number; // 8.0 kg/t
+  ctAcceleration: number; // 0.15 m/s^2
+  ctMotorMultiplicity: number; // 1.0
 
   // Long Travel Factors
   ltDutyFactor: number;
   ltServiceFactor: number;
-  ltTorqueFactor: number;        // 1.2
-  ltFrictionFactor: number;      // 10.0 kg/t
-  ltAcceleration: number;        // 0.15 m/s^2
-  ltMotorMultiplicity: number;   // 1.0
+  ltTorqueFactor: number; // 1.2
+  ltFrictionFactor: number; // 10.0 kg/t
+  ltAcceleration: number; // 0.15 m/s^2
+  ltMotorMultiplicity: number; // 1.0
 
   // Wheels and Rail
   wheelCount: number;
@@ -79,7 +79,7 @@ export const DEFAULT_MASTER_SPECIFICATIONS: MasterCraneInputs = {
   swlTonnes: 10.0,
   crabWeightTonnes: 2.5,
   craneDeadWeightTonnes: 7.5,
-  hookBlockWeightTonnes: 0.30,
+  hookBlockWeightTonnes: 0.3,
 
   // Speeds
   hoistingSpeedMPerMin: 5.0,
@@ -122,15 +122,125 @@ export const DEFAULT_MASTER_SPECIFICATIONS: MasterCraneInputs = {
 };
 
 export const MASTER_SPEC_INPUT_DEFINITIONS: InputDefinition[] = [
-  { key: 'swlTonnes', label: 'Safe Working Load (SWL)', unit: 't', type: 'number', defaultValue: 10.0, required: true, min: 0.1, step: 0.5, description: 'Rated capacity of the crane' },
-  { key: 'spanM', label: 'Crane Span', unit: 'm', type: 'number', defaultValue: 10.0, required: true, min: 1.0, step: 0.5, description: 'Center-to-center distance of runway rails' },
-  { key: 'hoistHeightM', label: 'Hoisting Height', unit: 'm', type: 'number', defaultValue: 6.0, required: true, min: 1.0, step: 0.5, description: 'Maximum lift height of hook' },
-  { key: 'hoistingSpeedMPerMin', label: 'Hoisting Speed', unit: 'm/min', type: 'number', defaultValue: 5.0, required: true, min: 0.5, step: 0.5, description: 'Rated vertical lifting speed' },
-  { key: 'crossTravelSpeedMPerMin', label: 'Cross Travel Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, step: 1.0, description: 'Trolley cross travel speed' },
-  { key: 'longTravelSpeedMPerMin', label: 'Long Travel Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, step: 1.0, description: 'Crane long travel speed' },
-  { key: 'numberOfFalls', label: 'Number of Falls', unit: 'falls', type: 'number', defaultValue: 4, required: true, min: 1, step: 1, description: 'Total rope falls supporting the bottom block' },
-  { key: 'hookBlockWeightTonnes', label: 'Hook Block Weight', unit: 't', type: 'number', defaultValue: 0.30, required: true, min: 0.01, step: 0.05, description: 'Dead weight of bottom pulley hook block' },
-  { key: 'crabWeightTonnes', label: 'Crab (Trolley) Weight', unit: 't', type: 'number', defaultValue: 2.5, required: true, min: 0.1, step: 0.1, description: 'Weight of the cross-travel crab structure and machinery' },
-  { key: 'craneDeadWeightTonnes', label: 'Crane Dead Weight', unit: 't', type: 'number', defaultValue: 7.5, required: true, min: 0.5, step: 0.5, description: 'Total dead weight of bridge and components excluding crab' },
-  { key: 'hookApproachM', label: 'Hook Approach', unit: 'm', type: 'number', defaultValue: 0.9, required: true, min: 0.1, step: 0.05, description: 'Minimum hook distance from end rail center' },
+  {
+    key: 'swlTonnes',
+    label: 'Safe Working Load (SWL)',
+    unit: 't',
+    type: 'number',
+    defaultValue: 10.0,
+    required: true,
+    min: 0.1,
+    step: 0.5,
+    description: 'Rated capacity of the crane',
+  },
+  {
+    key: 'spanM',
+    label: 'Crane Span',
+    unit: 'm',
+    type: 'number',
+    defaultValue: 10.0,
+    required: true,
+    min: 1.0,
+    step: 0.5,
+    description: 'Center-to-center distance of runway rails',
+  },
+  {
+    key: 'hoistHeightM',
+    label: 'Hoisting Height',
+    unit: 'm',
+    type: 'number',
+    defaultValue: 6.0,
+    required: true,
+    min: 1.0,
+    step: 0.5,
+    description: 'Maximum lift height of hook',
+  },
+  {
+    key: 'hoistingSpeedMPerMin',
+    label: 'Hoisting Speed',
+    unit: 'm/min',
+    type: 'number',
+    defaultValue: 5.0,
+    required: true,
+    min: 0.5,
+    step: 0.5,
+    description: 'Rated vertical lifting speed',
+  },
+  {
+    key: 'crossTravelSpeedMPerMin',
+    label: 'Cross Travel Speed',
+    unit: 'm/min',
+    type: 'number',
+    defaultValue: 20.0,
+    required: true,
+    min: 1.0,
+    step: 1.0,
+    description: 'Trolley cross travel speed',
+  },
+  {
+    key: 'longTravelSpeedMPerMin',
+    label: 'Long Travel Speed',
+    unit: 'm/min',
+    type: 'number',
+    defaultValue: 20.0,
+    required: true,
+    min: 1.0,
+    step: 1.0,
+    description: 'Crane long travel speed',
+  },
+  {
+    key: 'numberOfFalls',
+    label: 'Number of Falls',
+    unit: 'falls',
+    type: 'number',
+    defaultValue: 4,
+    required: true,
+    min: 1,
+    step: 1,
+    description: 'Total rope falls supporting the bottom block',
+  },
+  {
+    key: 'hookBlockWeightTonnes',
+    label: 'Hook Block Weight',
+    unit: 't',
+    type: 'number',
+    defaultValue: 0.3,
+    required: true,
+    min: 0.01,
+    step: 0.05,
+    description: 'Dead weight of bottom pulley hook block',
+  },
+  {
+    key: 'crabWeightTonnes',
+    label: 'Crab (Trolley) Weight',
+    unit: 't',
+    type: 'number',
+    defaultValue: 2.5,
+    required: true,
+    min: 0.1,
+    step: 0.1,
+    description: 'Weight of the cross-travel crab structure and machinery',
+  },
+  {
+    key: 'craneDeadWeightTonnes',
+    label: 'Crane Dead Weight',
+    unit: 't',
+    type: 'number',
+    defaultValue: 7.5,
+    required: true,
+    min: 0.5,
+    step: 0.5,
+    description: 'Total dead weight of bridge and components excluding crab',
+  },
+  {
+    key: 'hookApproachM',
+    label: 'Hook Approach',
+    unit: 'm',
+    type: 'number',
+    defaultValue: 0.9,
+    required: true,
+    min: 0.1,
+    step: 0.05,
+    description: 'Minimum hook distance from end rail center',
+  },
 ];

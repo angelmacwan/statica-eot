@@ -7,10 +7,7 @@ interface CalculationTraceViewProps {
   sourceLineage?: SourceLineage;
 }
 
-export const CalculationTraceView: React.FC<CalculationTraceViewProps> = ({
-  steps,
-  sourceLineage,
-}) => {
+export const CalculationTraceView: React.FC<CalculationTraceViewProps> = ({ steps, sourceLineage }) => {
   const [expanded, setExpanded] = useState(true);
 
   if (!steps || steps.length === 0) {
@@ -78,8 +75,7 @@ export const CalculationTraceView: React.FC<CalculationTraceViewProps> = ({
                       key={name}
                       className="text-[11px] font-mono text-slate-400 bg-slate-800/40 px-2 py-0.5 rounded border border-slate-800"
                     >
-                      <strong className="text-slate-300">{name}</strong>: {String(val.value)}{' '}
-                      {val.unit || ''}
+                      <strong className="text-slate-300">{name}</strong>: {String(val.value)} {val.unit || ''}
                     </span>
                   ))}
                 </div>

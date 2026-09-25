@@ -26,40 +26,148 @@ export const hoistGearbox: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required reduction ratio for the hoisting mechanism, checks actual hoist speed within +-10% band, and verifies gearbox mechanical rating.',
+  description:
+    'Calculates the required reduction ratio for the hoisting mechanism, checks actual hoist speed within +-10% band, and verifies gearbox mechanical rating.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['M.H.', 'SPEED'],
 
   inputs: [
-    { key: 'selectedDrumDiameterMm', label: 'Selected Drum Diameter', unit: 'mm', type: 'number', defaultValue: 320.0, required: true, min: 100.0, description: 'Drum pitch diameter (H76)' },
-    { key: 'motorRpm', label: 'Motor Speed', unit: 'rpm', type: 'number', defaultValue: 935.0, required: true, min: 100.0, description: 'Full-load motor speed (J115 / F25)' },
-    { key: 'requiredHoistSpeedMPerMin', label: 'Required Hoisting Speed', unit: 'm/min', type: 'number', defaultValue: 5.0, required: true, min: 0.5, description: 'Design hoisting speed (J116)' },
-    { key: 'numberOfFalls', label: 'Number of Falls', unit: 'falls', type: 'number', defaultValue: 4, required: true, min: 1, step: 1, description: 'Total rope falls (J117)' },
-    { key: 'selectedGearboxId', label: 'Selected Gearbox', unit: '', type: 'select', defaultValue: 'gb-hoist-hr500-103', required: true, options: GEARBOX_CATALOG.filter(g => g.application === 'HOIST').map(g => ({ label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`, value: g.id })), description: 'Catalog gearbox' },
-    { key: 'selectedRatio', label: 'Selected Gearbox Ratio', unit: '', type: 'number', defaultValue: 103.4, required: true, min: 1.0, description: 'Exact ratio of chosen gearbox' },
-    { key: 'requiredMechanicalPowerKw', label: 'Required Mechanical Power', unit: 'kW', type: 'number', defaultValue: 9.914, required: false, description: 'Net power demand at input shaft (J35)' },
+    {
+      key: 'selectedDrumDiameterMm',
+      label: 'Selected Drum Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 320.0,
+      required: true,
+      min: 100.0,
+      description: 'Drum pitch diameter (H76)',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 935.0,
+      required: true,
+      min: 100.0,
+      description: 'Full-load motor speed (J115 / F25)',
+    },
+    {
+      key: 'requiredHoistSpeedMPerMin',
+      label: 'Required Hoisting Speed',
+      unit: 'm/min',
+      type: 'number',
+      defaultValue: 5.0,
+      required: true,
+      min: 0.5,
+      description: 'Design hoisting speed (J116)',
+    },
+    {
+      key: 'numberOfFalls',
+      label: 'Number of Falls',
+      unit: 'falls',
+      type: 'number',
+      defaultValue: 4,
+      required: true,
+      min: 1,
+      step: 1,
+      description: 'Total rope falls (J117)',
+    },
+    {
+      key: 'selectedGearboxId',
+      label: 'Selected Gearbox',
+      unit: '',
+      type: 'select',
+      defaultValue: 'gb-hoist-hr500-103',
+      required: true,
+      options: GEARBOX_CATALOG.filter((g) => g.application === 'HOIST').map((g) => ({
+        label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`,
+        value: g.id,
+      })),
+      description: 'Catalog gearbox',
+    },
+    {
+      key: 'selectedRatio',
+      label: 'Selected Gearbox Ratio',
+      unit: '',
+      type: 'number',
+      defaultValue: 103.4,
+      required: true,
+      min: 1.0,
+      description: 'Exact ratio of chosen gearbox',
+    },
+    {
+      key: 'requiredMechanicalPowerKw',
+      label: 'Required Mechanical Power',
+      unit: 'kW',
+      type: 'number',
+      defaultValue: 9.914,
+      required: false,
+      description: 'Net power demand at input shaft (J35)',
+    },
   ],
 
   outputs: [
-    { key: 'requiredRatio', label: 'Required Gear Ratio', unit: '', description: 'Theoretical exact reduction ratio (J119)' },
+    {
+      key: 'requiredRatio',
+      label: 'Required Gear Ratio',
+      unit: '',
+      description: 'Theoretical exact reduction ratio (J119)',
+    },
     { key: 'selectedRatio', label: 'Selected Gear Ratio', unit: '', description: 'Catalog ratio of selected gearbox' },
-    { key: 'actualHoistSpeedMPerMin', label: 'Actual Calculated Hoist Speed', unit: 'm/min', description: 'Actual speed delivered at hook (H128)' },
-    { key: 'allowedSpeedMinMPerMin', label: 'Allowed Minimum Speed (-10%)', unit: 'm/min', description: 'Lower allowable speed bound' },
-    { key: 'allowedSpeedMaxMPerMin', label: 'Allowed Maximum Speed (+10%)', unit: 'm/min', description: 'Upper allowable speed bound' },
+    {
+      key: 'actualHoistSpeedMPerMin',
+      label: 'Actual Calculated Hoist Speed',
+      unit: 'm/min',
+      description: 'Actual speed delivered at hook (H128)',
+    },
+    {
+      key: 'allowedSpeedMinMPerMin',
+      label: 'Allowed Minimum Speed (-10%)',
+      unit: 'm/min',
+      description: 'Lower allowable speed bound',
+    },
+    {
+      key: 'allowedSpeedMaxMPerMin',
+      label: 'Allowed Maximum Speed (+10%)',
+      unit: 'm/min',
+      description: 'Upper allowable speed bound',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'rope-drum', sourceKey: 'selectedDrumDiameterMm', targetKey: 'selectedDrumDiameterMm', label: 'Drum Diameter' },
+    {
+      sourceToolId: 'rope-drum',
+      sourceKey: 'selectedDrumDiameterMm',
+      targetKey: 'selectedDrumDiameterMm',
+      label: 'Drum Diameter',
+    },
     { sourceToolId: 'main-hoist-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
-    { sourceToolId: 'master', sourceKey: 'hoistingSpeedMPerMin', targetKey: 'requiredHoistSpeedMPerMin', label: 'Hoisting Speed' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'hoistingSpeedMPerMin',
+      targetKey: 'requiredHoistSpeedMPerMin',
+      label: 'Hoisting Speed',
+    },
     { sourceToolId: 'master', sourceKey: 'numberOfFalls', targetKey: 'numberOfFalls', label: 'Number of Falls' },
-    { sourceToolId: 'main-hoist-brake', sourceKey: 'mechanicalPowerKw', targetKey: 'requiredMechanicalPowerKw', label: 'Mechanical Power' },
+    {
+      sourceToolId: 'main-hoist-brake',
+      sourceKey: 'mechanicalPowerKw',
+      targetKey: 'requiredMechanicalPowerKw',
+      label: 'Mechanical Power',
+    },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
-    const selectedDrumDiameterMm = assertPositiveNumber(inputs.selectedDrumDiameterMm ?? 320.0, 'selectedDrumDiameterMm');
+    const selectedDrumDiameterMm = assertPositiveNumber(
+      inputs.selectedDrumDiameterMm ?? 320.0,
+      'selectedDrumDiameterMm',
+    );
     const motorRpm = assertPositiveNumber(inputs.motorRpm ?? 935.0, 'motorRpm');
-    const requiredHoistSpeedMPerMin = assertPositiveNumber(inputs.requiredHoistSpeedMPerMin ?? 5.0, 'requiredHoistSpeedMPerMin');
+    const requiredHoistSpeedMPerMin = assertPositiveNumber(
+      inputs.requiredHoistSpeedMPerMin ?? 5.0,
+      'requiredHoistSpeedMPerMin',
+    );
     const numberOfFalls = assertPositiveNumber(inputs.numberOfFalls ?? 4, 'numberOfFalls');
 
     const selectedGearboxId = String(inputs.selectedGearboxId ?? 'gb-hoist-hr500-103');
@@ -74,7 +182,8 @@ export const hoistGearbox: CalculationToolDefinition = {
 
     // H128 = (F25 / D125) * (3.142 * H76 / 1000) / (J117 / 2)
     // Note: workbook formula uses 3.142 approximation for PI in cell H128
-    const actualHoistSpeedMPerMin = (motorRpm / selectedRatio) * (3.142 * selectedDrumDiameterMm / 1000) / (numberOfFalls / 2);
+    const actualHoistSpeedMPerMin =
+      ((motorRpm / selectedRatio) * ((3.142 * selectedDrumDiameterMm) / 1000)) / (numberOfFalls / 2);
 
     const allowedSpeedMinMPerMin = requiredHoistSpeedMPerMin * 0.9;
     const allowedSpeedMaxMPerMin = requiredHoistSpeedMPerMin * 1.1;

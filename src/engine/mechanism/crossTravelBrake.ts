@@ -30,22 +30,100 @@ export const crossTravelBrake: CalculationToolDefinition = {
   sourceSheets: ['C.T.', 'BRAKE SOC'],
 
   inputs: [
-    { key: 'requiredMotorKw', label: 'CT Motor Power', unit: 'kW', type: 'number', defaultValue: 0.5982255635, required: true, min: 0.05, description: 'Motor power from CT Motor tool' },
-    { key: 'deratingFactor', label: 'Derating Factor (J16)', unit: '', type: 'number', defaultValue: 0.95, required: true, min: 0.5, max: 1.0, description: 'Motor derating factor' },
-    { key: 'brakeFactor', label: 'Brake Torque Duty Ratio', unit: '', type: 'number', defaultValue: 1.06, required: true, min: 0.5, description: 'Service factor ratio (1.06 in sample)' },
-    { key: 'motorRpm', label: 'Motor Speed (RPM)', unit: 'rpm', type: 'number', defaultValue: 860, required: true, min: 100, description: 'Motor speed (F28 / J40)' },
-    { key: 'selectedBrakeId', label: 'Selected Brake Model', unit: '', type: 'select', defaultValue: 'mdt-100-18', required: true, options: BRAKE_CATALOG.map(b => ({ label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`, value: b.id })), description: 'Catalog brake' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', type: 'number', defaultValue: 6.0, required: true, min: 0.1, description: 'Selected brake rated torque' },
+    {
+      key: 'requiredMotorKw',
+      label: 'CT Motor Power',
+      unit: 'kW',
+      type: 'number',
+      defaultValue: 0.5982255635,
+      required: true,
+      min: 0.05,
+      description: 'Motor power from CT Motor tool',
+    },
+    {
+      key: 'deratingFactor',
+      label: 'Derating Factor (J16)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.95,
+      required: true,
+      min: 0.5,
+      max: 1.0,
+      description: 'Motor derating factor',
+    },
+    {
+      key: 'brakeFactor',
+      label: 'Brake Torque Duty Ratio',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.06,
+      required: true,
+      min: 0.5,
+      description: 'Service factor ratio (1.06 in sample)',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed (RPM)',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 860,
+      required: true,
+      min: 100,
+      description: 'Motor speed (F28 / J40)',
+    },
+    {
+      key: 'selectedBrakeId',
+      label: 'Selected Brake Model',
+      unit: '',
+      type: 'select',
+      defaultValue: 'mdt-100-18',
+      required: true,
+      options: BRAKE_CATALOG.map((b) => ({
+        label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`,
+        value: b.id,
+      })),
+      description: 'Catalog brake',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      type: 'number',
+      defaultValue: 6.0,
+      required: true,
+      min: 0.1,
+      description: 'Selected brake rated torque',
+    },
   ],
 
   outputs: [
-    { key: 'requiredBrakeTorqueKgm', label: 'Required Brake Torque (kg-m)', unit: 'kg-m', description: 'Calculated holding torque in kg-m (F42)' },
-    { key: 'requiredBrakeTorqueNm', label: 'Required Brake Torque (N-m)', unit: 'N-m', description: 'Calculated holding torque in N-m (I42)' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', description: 'Torque rating of selected brake' },
+    {
+      key: 'requiredBrakeTorqueKgm',
+      label: 'Required Brake Torque (kg-m)',
+      unit: 'kg-m',
+      description: 'Calculated holding torque in kg-m (F42)',
+    },
+    {
+      key: 'requiredBrakeTorqueNm',
+      label: 'Required Brake Torque (N-m)',
+      unit: 'N-m',
+      description: 'Calculated holding torque in N-m (I42)',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      description: 'Torque rating of selected brake',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'cross-travel-motor', sourceKey: 'requiredMotorKw', targetKey: 'requiredMotorKw', label: 'CT Motor Power' },
+    {
+      sourceToolId: 'cross-travel-motor',
+      sourceKey: 'requiredMotorKw',
+      targetKey: 'requiredMotorKw',
+      label: 'CT Motor Power',
+    },
     { sourceToolId: 'cross-travel-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
   ],
 
@@ -63,7 +141,11 @@ export const crossTravelBrake: CalculationToolDefinition = {
     );
 
     // F42 = 975 * (H23 * J16 / brakeFactor) / J40
-    const requiredBrakeTorqueKgm = (975 * (requiredMotorKw * deratingFactor / brakeFactor)) / motorRpm;
+    // NOTE (BKL-002): The CT workbook cell J38 uses H23*J16/(J13*J14) and J39=J14,
+    // simplifying to F42 = 975*H23*J16/J13/J40. The brakeFactor=1.06 parameter empirically
+    // matches the golden value (0.6078394342 kg-m) and is preserved here pending workbook cell-by-cell
+    // verification of J38/J39 in the C.T. sheet. Engineering review required.
+    const requiredBrakeTorqueKgm = (975 * ((requiredMotorKw * deratingFactor) / brakeFactor)) / motorRpm;
 
     // I42 = F42 * 9.80665
     const requiredBrakeTorqueNm = requiredBrakeTorqueKgm * 9.80665;

@@ -24,39 +24,122 @@ export const sheaves: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required pitch circle diameter for main load sheaves and equalizing/compensating sheaves per IS 3177.',
+  description:
+    'Calculates the required pitch circle diameter for main load sheaves and equalizing/compensating sheaves per IS 3177.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['M.H.'],
 
   inputs: [
-    { key: 'ropeDiameterMm', label: 'Rope Diameter', unit: 'mm', type: 'number', defaultValue: 16.0, required: true, min: 6.0, description: 'Wire rope nominal diameter (D61 / J137)' },
-    { key: 'hoistDutyFactor', label: 'Duty Factor (J138)', unit: '', type: 'number', defaultValue: 1.50, required: true, min: 0.5, description: 'Class duty factor' },
-    { key: 'sheaveFactor1', label: 'Sheave Factor K1 (J139)', unit: '', type: 'number', defaultValue: 1.0, required: true, min: 0.5, description: 'Base sizing factor' },
-    { key: 'sheaveFactor2', label: 'Sheave Factor K2 (J140)', unit: '', type: 'number', defaultValue: 1.0, required: true, min: 0.5, description: 'Application coefficient' },
-    { key: 'selectedMainSheaveMm', label: 'Selected Main Sheave PCD', unit: 'mm', type: 'number', defaultValue: 320.0, required: true, min: 100.0, description: 'Pitch circle diameter of load sheaves' },
-    { key: 'selectedEqualizingSheaveMm', label: 'Selected Equalizer Sheave PCD', unit: 'mm', type: 'number', defaultValue: 200.0, required: true, min: 50.0, description: 'Pitch diameter of equalizing sheave' },
+    {
+      key: 'ropeDiameterMm',
+      label: 'Rope Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 16.0,
+      required: true,
+      min: 6.0,
+      description: 'Wire rope nominal diameter (D61 / J137)',
+    },
+    {
+      key: 'hoistDutyFactor',
+      label: 'Duty Factor (J138)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.5,
+      required: true,
+      min: 0.5,
+      description: 'Class duty factor',
+    },
+    {
+      key: 'sheaveFactor1',
+      label: 'Sheave Factor K1 (J139)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.0,
+      required: true,
+      min: 0.5,
+      description: 'Base sizing factor',
+    },
+    {
+      key: 'sheaveFactor2',
+      label: 'Sheave Factor K2 (J140)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.0,
+      required: true,
+      min: 0.5,
+      description: 'Application coefficient',
+    },
+    {
+      key: 'selectedMainSheaveMm',
+      label: 'Selected Main Sheave PCD',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 320.0,
+      required: true,
+      min: 100.0,
+      description: 'Pitch circle diameter of load sheaves',
+    },
+    {
+      key: 'selectedEqualizingSheaveMm',
+      label: 'Selected Equalizer Sheave PCD',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 200.0,
+      required: true,
+      min: 50.0,
+      description: 'Pitch diameter of equalizing sheave',
+    },
   ],
 
   outputs: [
-    { key: 'requiredMainSheaveMm', label: 'Required Main Sheave Diameter', unit: 'mm', description: 'Calculated minimum load sheave PCD (H142)' },
-    { key: 'selectedMainSheaveMm', label: 'Selected Main Sheave Diameter', unit: 'mm', description: 'Catalog/drawing load sheave diameter' },
-    { key: 'requiredEqualizingSheaveMm', label: 'Required Equalizing Sheave Diameter', unit: 'mm', description: 'Calculated minimum equalizer sheave PCD (H145)' },
-    { key: 'selectedEqualizingSheaveMm', label: 'Selected Equalizer Sheave Diameter', unit: 'mm', description: 'Catalog/drawing equalizer sheave diameter' },
+    {
+      key: 'requiredMainSheaveMm',
+      label: 'Required Main Sheave Diameter',
+      unit: 'mm',
+      description: 'Calculated minimum load sheave PCD (H142)',
+    },
+    {
+      key: 'selectedMainSheaveMm',
+      label: 'Selected Main Sheave Diameter',
+      unit: 'mm',
+      description: 'Catalog/drawing load sheave diameter',
+    },
+    {
+      key: 'requiredEqualizingSheaveMm',
+      label: 'Required Equalizing Sheave Diameter',
+      unit: 'mm',
+      description: 'Calculated minimum equalizer sheave PCD (H145)',
+    },
+    {
+      key: 'selectedEqualizingSheaveMm',
+      label: 'Selected Equalizer Sheave Diameter',
+      unit: 'mm',
+      description: 'Catalog/drawing equalizer sheave diameter',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'wire-rope', sourceKey: 'selectedRopeDiameterMm', targetKey: 'ropeDiameterMm', label: 'Rope Diameter' },
+    {
+      sourceToolId: 'wire-rope',
+      sourceKey: 'selectedRopeDiameterMm',
+      targetKey: 'ropeDiameterMm',
+      label: 'Rope Diameter',
+    },
     { sourceToolId: 'master', sourceKey: 'hoistDutyFactor', targetKey: 'hoistDutyFactor', label: 'Duty Factor' },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
     const ropeDiameterMm = assertPositiveNumber(inputs.ropeDiameterMm ?? 16.0, 'ropeDiameterMm');
-    const hoistDutyFactor = assertPositiveNumber(inputs.hoistDutyFactor ?? 1.50, 'hoistDutyFactor');
+    const hoistDutyFactor = assertPositiveNumber(inputs.hoistDutyFactor ?? 1.5, 'hoistDutyFactor');
     const sheaveFactor1 = assertPositiveNumber(inputs.sheaveFactor1 ?? 1.0, 'sheaveFactor1');
     const sheaveFactor2 = assertPositiveNumber(inputs.sheaveFactor2 ?? 1.0, 'sheaveFactor2');
 
     const selectedMainSheaveMm = assertPositiveNumber(inputs.selectedMainSheaveMm ?? 320.0, 'selectedMainSheaveMm');
-    const selectedEqualizingSheaveMm = assertPositiveNumber(inputs.selectedEqualizingSheaveMm ?? 200.0, 'selectedEqualizingSheaveMm');
+    const selectedEqualizingSheaveMm = assertPositiveNumber(
+      inputs.selectedEqualizingSheaveMm ?? 200.0,
+      'selectedEqualizingSheaveMm',
+    );
 
     // H142 = 12 * J137 * J138 * J139 * J140
     const requiredMainSheaveMm = 12 * ropeDiameterMm * hoistDutyFactor * sheaveFactor1 * sheaveFactor2;
@@ -145,8 +228,16 @@ export const sheaves: CalculationToolDefinition = {
       outputs: {
         requiredMainSheaveMm: { value: requiredMainSheaveMm, unit: 'mm', label: 'Required Main Sheave Diameter' },
         selectedMainSheaveMm: { value: selectedMainSheaveMm, unit: 'mm', label: 'Selected Main Sheave Diameter' },
-        requiredEqualizingSheaveMm: { value: requiredEqualizingSheaveMm, unit: 'mm', label: 'Required Equalizer Diameter' },
-        selectedEqualizingSheaveMm: { value: selectedEqualizingSheaveMm, unit: 'mm', label: 'Selected Equalizer Diameter' },
+        requiredEqualizingSheaveMm: {
+          value: requiredEqualizingSheaveMm,
+          unit: 'mm',
+          label: 'Required Equalizer Diameter',
+        },
+        selectedEqualizingSheaveMm: {
+          value: selectedEqualizingSheaveMm,
+          unit: 'mm',
+          label: 'Selected Equalizer Diameter',
+        },
       },
       checks,
       steps,

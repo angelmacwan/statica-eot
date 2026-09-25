@@ -16,15 +16,7 @@ export interface ToleranceCheckOptions {
  * as defined in the SPEED sheet: lower = required * 0.9, upper = required * 1.1
  */
 export function checkSpeedTolerance(options: ToleranceCheckOptions): CalculationCheck {
-  const {
-    id,
-    name,
-    actual,
-    required,
-    tolerancePercent = 0.1,
-    unit = 'm/min',
-    parameterName = 'Speed',
-  } = options;
+  const { id, name, actual, required, tolerancePercent = 0.1, unit = 'm/min', parameterName = 'Speed' } = options;
 
   const lowerBound = required * (1 - tolerancePercent);
   const upperBound = required * (1 + tolerancePercent);

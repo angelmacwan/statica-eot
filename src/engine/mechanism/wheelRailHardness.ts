@@ -24,31 +24,93 @@ export const wheelRailHardness: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
-  description: 'Calculates the required wheel tread Brinell hardness (BHN) relative to runway rail hardness, surfacing the legacy calculation discrepancy for review.',
+  description:
+    'Calculates the required wheel tread Brinell hardness (BHN) relative to runway rail hardness, surfacing the legacy calculation discrepancy for review.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['HARDNESS-BHw,BHr'],
 
   inputs: [
-    { key: 'railHardnessBhn', label: 'Rail Hardness (BH_r / J10)', unit: 'BHN', type: 'number', defaultValue: 200.0, required: true, min: 100.0, description: 'Brinell hardness of rail material' },
-    { key: 'loadDistributionFactor', label: 'Load Factor (J11)', unit: '', type: 'number', defaultValue: 1.29, required: true, min: 0.5, description: 'Distribution factor from workbook' },
-    { key: 'wheelGeometryFactor', label: 'Geometry Factor (J13)', unit: '', type: 'number', defaultValue: 1.08, required: true, min: 0.5, description: 'Wheel profile factor' },
-    { key: 'coefficientFactor', label: 'Hardness Factor (J15)', unit: '', type: 'number', defaultValue: 1.09, required: true, min: 0.5, description: 'Material property coefficient' },
-    { key: 'minRecommendedHardnessBhn', label: 'Minimum Specified Hardness', unit: 'BHN', type: 'number', defaultValue: 300.0, required: true, min: 150.0, description: 'Specified minimum hardness range threshold' },
+    {
+      key: 'railHardnessBhn',
+      label: 'Rail Hardness (BH_r / J10)',
+      unit: 'BHN',
+      type: 'number',
+      defaultValue: 200.0,
+      required: true,
+      min: 100.0,
+      description: 'Brinell hardness of rail material',
+    },
+    {
+      key: 'loadDistributionFactor',
+      label: 'Load Factor (J11)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.29,
+      required: true,
+      min: 0.5,
+      description: 'Distribution factor from workbook',
+    },
+    {
+      key: 'wheelGeometryFactor',
+      label: 'Geometry Factor (J13)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.08,
+      required: true,
+      min: 0.5,
+      description: 'Wheel profile factor',
+    },
+    {
+      key: 'coefficientFactor',
+      label: 'Hardness Factor (J15)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.09,
+      required: true,
+      min: 0.5,
+      description: 'Material property coefficient',
+    },
+    {
+      key: 'minRecommendedHardnessBhn',
+      label: 'Minimum Specified Hardness',
+      unit: 'BHN',
+      type: 'number',
+      defaultValue: 300.0,
+      required: true,
+      min: 150.0,
+      description: 'Specified minimum hardness range threshold',
+    },
   ],
 
   outputs: [
-    { key: 'calculatedWheelHardnessBhn', label: 'Calculated Wheel Hardness', unit: 'BHN', description: 'Theoretical calculated hardness (BH_w)' },
-    { key: 'minRecommendedHardnessBhn', label: 'Minimum Recommended Hardness', unit: 'BHN', description: 'Recommended lower limit from workbook notes' },
+    {
+      key: 'calculatedWheelHardnessBhn',
+      label: 'Calculated Wheel Hardness',
+      unit: 'BHN',
+      description: 'Theoretical calculated hardness (BH_w)',
+    },
+    {
+      key: 'minRecommendedHardnessBhn',
+      label: 'Minimum Recommended Hardness',
+      unit: 'BHN',
+      description: 'Recommended lower limit from workbook notes',
+    },
   ],
 
   dependencies: [],
 
   calculate(inputs: Record<string, any>): CalculationResult {
     const railHardnessBhn = assertPositiveNumber(inputs.railHardnessBhn ?? 200.0, 'railHardnessBhn');
-    const loadDistributionFactor = assertPositiveNumber(inputs.loadDistributionFactor ?? 1.29, 'loadDistributionFactor');
+    const loadDistributionFactor = assertPositiveNumber(
+      inputs.loadDistributionFactor ?? 1.29,
+      'loadDistributionFactor',
+    );
     const wheelGeometryFactor = assertPositiveNumber(inputs.wheelGeometryFactor ?? 1.08, 'wheelGeometryFactor');
     const coefficientFactor = assertPositiveNumber(inputs.coefficientFactor ?? 1.09, 'coefficientFactor');
-    const minRecommendedHardnessBhn = assertPositiveNumber(inputs.minRecommendedHardnessBhn ?? 300.0, 'minRecommendedHardnessBhn');
+    const minRecommendedHardnessBhn = assertPositiveNumber(
+      inputs.minRecommendedHardnessBhn ?? 300.0,
+      'minRecommendedHardnessBhn',
+    );
 
     // BH_w = (1.3 * J10 * J11) / (J13 * J15)
     const numerator = 1.3 * railHardnessBhn * loadDistributionFactor;
@@ -122,8 +184,16 @@ export const wheelRailHardness: CalculationToolDefinition = {
       },
       derived: {},
       outputs: {
-        calculatedWheelHardnessBhn: { value: calculatedWheelHardnessBhn, unit: 'BHN', label: 'Calculated Wheel Hardness' },
-        minRecommendedHardnessBhn: { value: minRecommendedHardnessBhn, unit: 'BHN', label: 'Recommended Minimum Hardness' },
+        calculatedWheelHardnessBhn: {
+          value: calculatedWheelHardnessBhn,
+          unit: 'BHN',
+          label: 'Calculated Wheel Hardness',
+        },
+        minRecommendedHardnessBhn: {
+          value: minRecommendedHardnessBhn,
+          unit: 'BHN',
+          label: 'Recommended Minimum Hardness',
+        },
       },
       checks,
       steps,

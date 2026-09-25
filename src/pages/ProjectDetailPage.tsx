@@ -178,7 +178,9 @@ export const ProjectDetailPage: React.FC = () => {
         const freshInst: ToolInstance = {
           ...inst,
           inputs: mergedInputs,
-          outputs: calcResult ? Object.fromEntries(Object.entries(calcResult.outputs).map(([k, v]) => [k, (v as any).value])) : inst.outputs,
+          outputs: calcResult
+            ? Object.fromEntries(Object.entries(calcResult.outputs).map(([k, v]) => [k, (v as any).value]))
+            : inst.outputs,
           calculationResult: calcResult,
           calculationStatus: status,
           calculatedRevision: inst.inputRevision,
@@ -232,9 +234,7 @@ export const ProjectDetailPage: React.FC = () => {
                 <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/40 text-blue-400">
                   {project.craneType} Crane Platform
                 </span>
-                <span className="text-[10px] font-mono text-slate-400">
-                  IS 3177:1999 / IS 807:2006
-                </span>
+                <span className="text-[10px] font-mono text-slate-400">IS 3177:1999 / IS 807:2006</span>
               </div>
               <h1 className="text-xl font-bold text-white tracking-tight">
                 {project.projectName}
@@ -273,13 +273,11 @@ export const ProjectDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  Upstream specifications were modified. One or more calculation tools are marked stale and require recalculation.
+                  Upstream specifications were modified. One or more calculation tools are marked stale and require
+                  recalculation.
                 </span>
               </div>
-              <button
-                onClick={handleRecalculateAll}
-                className="underline font-semibold hover:text-white shrink-0"
-              >
+              <button onClick={handleRecalculateAll} className="underline font-semibold hover:text-white shrink-0">
                 Refresh Now
               </button>
             </div>
@@ -335,7 +333,8 @@ export const ProjectDetailPage: React.FC = () => {
                 <HardHat className="w-10 h-10 text-slate-600 mx-auto mb-2" />
                 <h3 className="text-sm font-semibold text-slate-300">No Calculation Tools Added</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                  Add crane mechanism tools (Main Hoist Motor, Brake, Wire Rope, Drum, Gearbox, etc.) to start engineering calculations.
+                  Add crane mechanism tools (Main Hoist Motor, Brake, Wire Rope, Drum, Gearbox, etc.) to start
+                  engineering calculations.
                 </p>
                 <button
                   onClick={() => setShowAddModal(true)}
@@ -392,15 +391,17 @@ export const ProjectDetailPage: React.FC = () => {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
-                            {inst.outputs && Object.entries(inst.outputs).slice(0, 3).map(([k, v]) => (
-                              <span key={k} className="font-mono">
-                                <span className="text-slate-500">{k}:</span> {typeof v === 'number' ? v.toFixed(3) : String(v)}
-                              </span>
-                            ))}
+                            {inst.outputs &&
+                              Object.entries(inst.outputs)
+                                .slice(0, 3)
+                                .map(([k, v]) => (
+                                  <span key={k} className="font-mono">
+                                    <span className="text-slate-500">{k}:</span>{' '}
+                                    {typeof v === 'number' ? v.toFixed(3) : String(v)}
+                                  </span>
+                                ))}
                             {inst.sourceWorkbook && (
-                              <span className="text-[11px] text-slate-500 italic">
-                                Source: {inst.sourceWorkbook}
-                              </span>
+                              <span className="text-[11px] text-slate-500 italic">Source: {inst.sourceWorkbook}</span>
                             )}
                           </div>
                         </div>
@@ -496,9 +497,7 @@ export const ProjectDetailPage: React.FC = () => {
                 <button
                   onClick={() => setModalTier('C')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                    modalTier === 'C'
-                      ? 'bg-slate-800 text-slate-300'
-                      : 'text-slate-400 hover:text-white'
+                    modalTier === 'C' ? 'bg-slate-800 text-slate-300' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Tier C: Legacy XLS Inventory ({getTierCTools().length})
@@ -506,38 +505,33 @@ export const ProjectDetailPage: React.FC = () => {
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
-                {(modalTier === 'A'
-                  ? getTierATools()
-                  : modalTier === 'B'
-                  ? getTierBTools()
-                  : getTierCTools()
-                ).map((tool) => (
-                  <div
-                    key={tool.id}
-                    className="p-3.5 bg-slate-950/60 border border-slate-800/80 rounded-xl hover:border-slate-700 transition flex items-center justify-between gap-4"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-white">{tool.name}</span>
-                        <StatusBadge status={tool.reviewStatus} size="sm" />
-                      </div>
-                      <p className="text-[11px] text-slate-400 leading-tight">
-                        {tool.description}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1.5 text-[10px] text-slate-500 font-mono">
-                        <span>Source: {tool.sourceWorkbook}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleAddTool(tool.id)}
-                      disabled={tool.tier === 'C'}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-semibold rounded-lg transition shrink-0"
+                {(modalTier === 'A' ? getTierATools() : modalTier === 'B' ? getTierBTools() : getTierCTools()).map(
+                  (tool) => (
+                    <div
+                      key={tool.id}
+                      className="p-3.5 bg-slate-950/60 border border-slate-800/80 rounded-xl hover:border-slate-700 transition flex items-center justify-between gap-4"
                     >
-                      {tool.tier === 'C' ? 'Disabled' : 'Add Tool'}
-                    </button>
-                  </div>
-                ))}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-bold text-white">{tool.name}</span>
+                          <StatusBadge status={tool.reviewStatus} size="sm" />
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-tight">{tool.description}</p>
+                        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-slate-500 font-mono">
+                          <span>Source: {tool.sourceWorkbook}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleAddTool(tool.id)}
+                        disabled={tool.tier === 'C'}
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-xs font-semibold rounded-lg transition shrink-0"
+                      >
+                        {tool.tier === 'C' ? 'Disabled' : 'Add Tool'}
+                      </button>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>

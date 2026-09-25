@@ -52,6 +52,6 @@ describe('Validation, Invariant, and Tier Classification Tests', () => {
     const ids = ALL_TOOLS.map((t) => t.id);
     const uniqueIds = new Set(ids);
     expect(uniqueIds.size).toBe(ids.length);
-    expect(getTierATools().length).toBe(16);
+    expect(getTierATools().length).toBe(17);
   });
 });

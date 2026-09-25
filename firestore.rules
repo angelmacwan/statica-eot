@@ -24,15 +24,22 @@ service cloud.firestore {
     match /projects/{projectId} {
       allow create: if signedIn() && request.resource.data.ownerUid == request.auth.uid;
       allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
-      allow update: if signedIn() && resource.data.ownerUid == request.auth.uid && request.resource.data.ownerUid == resource.data.ownerUid;
+      allow update: if signedIn() && resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.ownerUid == resource.data.ownerUid;
       allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
 
       match /toolInstances/{toolInstanceId} {
-        allow read, write: if isProjectOwner(projectId);
+        allow read: if isProjectOwner(projectId);
+        allow create: if isProjectOwner(projectId);
+        allow update: if isProjectOwner(projectId);
+        allow delete: if isProjectOwner(projectId);
       }
 
       match /reports/{reportId} {
-        allow read, write: if isProjectOwner(projectId);
+        allow read: if isProjectOwner(projectId);
+        allow create: if isProjectOwner(projectId);
+        allow update: if false; // Reports are immutable once saved
+        allow delete: if isProjectOwner(projectId);
       }
     }
   }

@@ -24,56 +24,207 @@ export const crossTravelMotor: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required cross-travel motor power taking into account rolling friction, rotational inertia, acceleration resistance, and gearbox efficiency.',
+  description:
+    'Calculates the required cross-travel motor power taking into account rolling friction, rotational inertia, acceleration resistance, and gearbox efficiency.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['C.T.', 'C.T.-INDOOR'],
 
   inputs: [
-    { key: 'swlTonnes', label: 'Safe Working Load (SWL)', unit: 't', type: 'number', defaultValue: 10.0, required: true, min: 0.1, description: 'Crane capacity' },
-    { key: 'crabWeightTonnes', label: 'Crab (Trolley) Weight', unit: 't', type: 'number', defaultValue: 2.5, required: true, min: 0.1, description: 'Crab weight (J10)' },
-    { key: 'crossTravelSpeedMPerMin', label: 'Cross Travel Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, description: 'CT speed (J12)' },
-    { key: 'ctServiceFactor', label: 'CT Service Factor (J13)', unit: '', type: 'number', defaultValue: 0.67, required: true, min: 0.1, description: 'Service factor' },
-    { key: 'ctDutyFactor', label: 'CT Duty Factor (J14)', unit: '', type: 'number', defaultValue: 1.25, required: true, min: 0.1, description: 'Duty factor' },
-    { key: 'ctMotorMultiplicity', label: 'Motor Multiplicity (J15)', unit: '', type: 'number', defaultValue: 1.0, required: true, min: 0.1, description: 'Multiplicity' },
-    { key: 'ambientDeratingFactor', label: 'Derating Factor (J16)', unit: '', type: 'number', defaultValue: 0.95, required: true, min: 0.5, max: 1.0, description: 'Ambient derating' },
-    { key: 'ctTorqueFactor', label: 'CT Torque Factor (J17)', unit: '', type: 'number', defaultValue: 1.2, required: true, min: 0.5, description: 'Torque factor' },
-    { key: 'ctFrictionFactor', label: 'Friction Resistance (J18)', unit: 'kg/t', type: 'number', defaultValue: 8.0, required: true, min: 1.0, description: 'Tread friction and flange friction' },
-    { key: 'ctAccelerationResistance', label: 'Acceleration Factor (J19)', unit: '', type: 'number', defaultValue: 9.597477427, required: true, min: 0.1, description: 'Inertia acceleration term' },
-    { key: 'numberOfGearboxStages', label: 'Gearbox Stages (J21)', unit: '', type: 'number', defaultValue: 2, required: true, min: 1, step: 1, description: 'Reduction stages' },
-    { key: 'selectedMotorKw', label: 'Selected Motor Power', unit: 'kW', type: 'number', defaultValue: 0.75, required: true, min: 0.1, description: 'Selected motor rating' },
-    { key: 'selectedMotorRpm', label: 'Selected Motor Speed', unit: 'rpm', type: 'number', defaultValue: 860, required: true, min: 100, description: 'Selected motor speed' },
+    {
+      key: 'swlTonnes',
+      label: 'Safe Working Load (SWL)',
+      unit: 't',
+      type: 'number',
+      defaultValue: 10.0,
+      required: true,
+      min: 0.1,
+      description: 'Crane capacity',
+    },
+    {
+      key: 'crabWeightTonnes',
+      label: 'Crab (Trolley) Weight',
+      unit: 't',
+      type: 'number',
+      defaultValue: 2.5,
+      required: true,
+      min: 0.1,
+      description: 'Crab weight (J10)',
+    },
+    {
+      key: 'crossTravelSpeedMPerMin',
+      label: 'Cross Travel Speed',
+      unit: 'm/min',
+      type: 'number',
+      defaultValue: 20.0,
+      required: true,
+      min: 1.0,
+      description: 'CT speed (J12)',
+    },
+    {
+      key: 'ctServiceFactor',
+      label: 'CT Service Factor (J13)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.67,
+      required: true,
+      min: 0.1,
+      description: 'Service factor',
+    },
+    {
+      key: 'ctDutyFactor',
+      label: 'CT Duty Factor (J14)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.25,
+      required: true,
+      min: 0.1,
+      description: 'Duty factor',
+    },
+    {
+      key: 'ctMotorMultiplicity',
+      label: 'Motor Multiplicity (J15)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.0,
+      required: true,
+      min: 0.1,
+      description: 'Multiplicity',
+    },
+    {
+      key: 'ambientDeratingFactor',
+      label: 'Derating Factor (J16)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.95,
+      required: true,
+      min: 0.5,
+      max: 1.0,
+      description: 'Ambient derating',
+    },
+    {
+      key: 'ctTorqueFactor',
+      label: 'CT Torque Factor (J17)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.2,
+      required: true,
+      min: 0.5,
+      description: 'Torque factor',
+    },
+    {
+      key: 'ctFrictionFactor',
+      label: 'Friction Resistance (J18)',
+      unit: 'kg/t',
+      type: 'number',
+      defaultValue: 8.0,
+      required: true,
+      min: 1.0,
+      description: 'Tread friction and flange friction',
+    },
+    {
+      key: 'ctAccelerationResistance',
+      label: 'Acceleration Factor (J19)',
+      unit: '',
+      type: 'number',
+      defaultValue: 9.597477427,
+      required: true,
+      min: 0.1,
+      description: 'Inertia acceleration term',
+    },
+    {
+      key: 'numberOfGearboxStages',
+      label: 'Gearbox Stages (J21)',
+      unit: '',
+      type: 'number',
+      defaultValue: 2,
+      required: true,
+      min: 1,
+      step: 1,
+      description: 'Reduction stages',
+    },
+    {
+      key: 'selectedMotorKw',
+      label: 'Selected Motor Power',
+      unit: 'kW',
+      type: 'number',
+      defaultValue: 0.75,
+      required: true,
+      min: 0.1,
+      description: 'Selected motor rating',
+    },
+    {
+      key: 'selectedMotorRpm',
+      label: 'Selected Motor Speed',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 860,
+      required: true,
+      min: 100,
+      description: 'Selected motor speed',
+    },
   ],
 
   outputs: [
     { key: 'totalMovingMassTonnes', label: 'Total Moving Mass (J11)', unit: 't', description: 'SWL + Crab Weight' },
     { key: 'driveEfficiency', label: 'Gearbox Efficiency (J20)', unit: '', description: '0.95^stages' },
-    { key: 'requiredMotorKw', label: 'Required CT Motor Power', unit: 'kW', description: 'Calculated motor power in kW (H23)' },
-    { key: 'requiredMotorHp', label: 'Required CT Motor Power (HP)', unit: 'HP', description: 'Calculated motor power in HP (H24)' },
+    {
+      key: 'requiredMotorKw',
+      label: 'Required CT Motor Power',
+      unit: 'kW',
+      description: 'Calculated motor power in kW (H23)',
+    },
+    {
+      key: 'requiredMotorHp',
+      label: 'Required CT Motor Power (HP)',
+      unit: 'HP',
+      description: 'Calculated motor power in HP (H24)',
+    },
     { key: 'selectedMotorKw', label: 'Selected Motor Power', unit: 'kW', description: 'Rated power of selected motor' },
   ],
 
   dependencies: [
     { sourceToolId: 'master', sourceKey: 'swlTonnes', targetKey: 'swlTonnes', label: 'SWL' },
     { sourceToolId: 'master', sourceKey: 'crabWeightTonnes', targetKey: 'crabWeightTonnes', label: 'Crab Weight' },
-    { sourceToolId: 'master', sourceKey: 'crossTravelSpeedMPerMin', targetKey: 'crossTravelSpeedMPerMin', label: 'CT Speed' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'crossTravelSpeedMPerMin',
+      targetKey: 'crossTravelSpeedMPerMin',
+      label: 'CT Speed',
+    },
     { sourceToolId: 'master', sourceKey: 'ctServiceFactor', targetKey: 'ctServiceFactor', label: 'CT Service Factor' },
     { sourceToolId: 'master', sourceKey: 'ctDutyFactor', targetKey: 'ctDutyFactor', label: 'CT Duty Factor' },
-    { sourceToolId: 'master', sourceKey: 'ambientDeratingFactor', targetKey: 'ambientDeratingFactor', label: 'Ambient Derating' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'ambientDeratingFactor',
+      targetKey: 'ambientDeratingFactor',
+      label: 'Ambient Derating',
+    },
     { sourceToolId: 'master', sourceKey: 'ctTorqueFactor', targetKey: 'ctTorqueFactor', label: 'CT Torque Factor' },
-    { sourceToolId: 'master', sourceKey: 'ctFrictionFactor', targetKey: 'ctFrictionFactor', label: 'CT Friction Factor' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'ctFrictionFactor',
+      targetKey: 'ctFrictionFactor',
+      label: 'CT Friction Factor',
+    },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
     const swlTonnes = assertPositiveNumber(inputs.swlTonnes ?? 10.0, 'swlTonnes');
     const crabWeightTonnes = assertPositiveNumber(inputs.crabWeightTonnes ?? 2.5, 'crabWeightTonnes');
-    const crossTravelSpeedMPerMin = assertPositiveNumber(inputs.crossTravelSpeedMPerMin ?? 20.0, 'crossTravelSpeedMPerMin');
+    const crossTravelSpeedMPerMin = assertPositiveNumber(
+      inputs.crossTravelSpeedMPerMin ?? 20.0,
+      'crossTravelSpeedMPerMin',
+    );
     const ctServiceFactor = assertPositiveNumber(inputs.ctServiceFactor ?? 0.67, 'ctServiceFactor');
     const ctDutyFactor = assertPositiveNumber(inputs.ctDutyFactor ?? 1.25, 'ctDutyFactor');
     const ctMotorMultiplicity = assertPositiveNumber(inputs.ctMotorMultiplicity ?? 1.0, 'ctMotorMultiplicity');
     const ambientDeratingFactor = assertPositiveNumber(inputs.ambientDeratingFactor ?? 0.95, 'ambientDeratingFactor');
     const ctTorqueFactor = assertPositiveNumber(inputs.ctTorqueFactor ?? 1.2, 'ctTorqueFactor');
     const ctFrictionFactor = assertPositiveNumber(inputs.ctFrictionFactor ?? 8.0, 'ctFrictionFactor');
-    const ctAccelerationResistance = assertPositiveNumber(inputs.ctAccelerationResistance ?? 9.597477426966066, 'ctAccelerationResistance');
+    const ctAccelerationResistance = assertPositiveNumber(
+      inputs.ctAccelerationResistance ?? 9.597477426966066,
+      'ctAccelerationResistance',
+    );
     const numberOfGearboxStages = assertPositiveNumber(inputs.numberOfGearboxStages ?? 2, 'numberOfGearboxStages');
 
     const selectedMotorKw = assertPositiveNumber(inputs.selectedMotorKw ?? 0.75, 'selectedMotorKw');
@@ -86,7 +237,9 @@ export const crossTravelMotor: CalculationToolDefinition = {
     const driveEfficiency = Math.pow(0.95, numberOfGearboxStages);
 
     // H23 = ((J11 * J12 * J13 * J14 * J15)/(6117 * J17 * J16)) * (J18 + (1100 * J19 / (981 * J20)))
-    const term1 = (totalMovingMassTonnes * crossTravelSpeedMPerMin * ctServiceFactor * ctDutyFactor * ctMotorMultiplicity) / (6117 * ctTorqueFactor * ambientDeratingFactor);
+    const term1 =
+      (totalMovingMassTonnes * crossTravelSpeedMPerMin * ctServiceFactor * ctDutyFactor * ctMotorMultiplicity) /
+      (6117 * ctTorqueFactor * ambientDeratingFactor);
     const accelTerm = (1100 * ctAccelerationResistance) / (981 * driveEfficiency);
     const term2 = ctFrictionFactor + accelTerm;
     const requiredMotorKw = term1 * term2;
@@ -114,8 +267,10 @@ export const crossTravelMotor: CalculationToolDefinition = {
       {
         id: 'step-ct-power-kw',
         label: 'Required Cross Travel Motor Power in kW (H23)',
-        formulaText: 'P_req = [ (M * V * K_s * K_d * K_m) / (6117 * K_t * K_amb) ] * [ w_f + (1100 * a) / (981 * eta) ]',
-        formulaMath: 'P_{req} = \\left[ \\frac{M \\times V \\times K_s \\times K_d \\times K_m}{6117 \\times K_t \\times K_{amb}} \\right] \\times \\left[ w_f + \\frac{1100 \\times a}{981 \\times \\eta} \\right]',
+        formulaText:
+          'P_req = [ (M * V * K_s * K_d * K_m) / (6117 * K_t * K_amb) ] * [ w_f + (1100 * a) / (981 * eta) ]',
+        formulaMath:
+          'P_{req} = \\left[ \\frac{M \\times V \\times K_s \\times K_d \\times K_m}{6117 \\times K_t \\times K_{amb}} \\right] \\times \\left[ w_f + \\frac{1100 \\times a}{981 \\times \\eta} \\right]',
         variables: {
           M: { value: totalMovingMassTonnes, unit: 't', label: 'Total Mass' },
           V: { value: crossTravelSpeedMPerMin, unit: 'm/min', label: 'CT Speed' },

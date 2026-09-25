@@ -23,32 +23,135 @@ export const mainHoistBrake: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required hoisting brake torque and verifies selected electro-hydraulic thruster/shoe brake capacity.',
+  description:
+    'Calculates the required hoisting brake torque and verifies selected electro-hydraulic thruster/shoe brake capacity.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['M.H.', 'BRAKE SOC'],
 
   inputs: [
-    { key: 'requiredMotorKw', label: 'Hoist Motor Power (H20)', unit: 'kW', type: 'number', defaultValue: 10.488, required: true, min: 0.1, description: 'Required motor power from Hoist Motor tool' },
-    { key: 'ambientDeratingFactor', label: 'Ambient Derating Factor (J18)', unit: '', type: 'number', defaultValue: 0.95, required: true, min: 0.5, max: 1.0, description: 'Ambient factor' },
-    { key: 'hoistServiceFactor', label: 'Service Factor (J11)', unit: '', type: 'number', defaultValue: 0.67, required: true, min: 0.1, description: 'Service factor' },
-    { key: 'hoistDutyFactor', label: 'Duty Factor (J12)', unit: '', type: 'number', defaultValue: 1.50, required: true, min: 0.1, description: 'Brake torque safety factor' },
-    { key: 'motorRpm', label: 'Motor Speed (RPM)', unit: 'rpm', type: 'number', defaultValue: 935, required: true, min: 100, description: 'Motor full-load speed' },
-    { key: 'selectedBrakeId', label: 'Selected Brake Model', unit: '', type: 'select', defaultValue: 'mdt-200-18', required: true, options: BRAKE_CATALOG.map(b => ({ label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`, value: b.id })), description: 'Catalog brake' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', type: 'number', defaultValue: 20.0, required: true, min: 0.1, description: 'Selected brake rated torque' },
+    {
+      key: 'requiredMotorKw',
+      label: 'Hoist Motor Power (H20)',
+      unit: 'kW',
+      type: 'number',
+      defaultValue: 10.488,
+      required: true,
+      min: 0.1,
+      description: 'Required motor power from Hoist Motor tool',
+    },
+    {
+      key: 'ambientDeratingFactor',
+      label: 'Ambient Derating Factor (J18)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.95,
+      required: true,
+      min: 0.5,
+      max: 1.0,
+      description: 'Ambient factor',
+    },
+    {
+      key: 'hoistServiceFactor',
+      label: 'Service Factor (J11)',
+      unit: '',
+      type: 'number',
+      defaultValue: 0.67,
+      required: true,
+      min: 0.1,
+      description: 'Service factor',
+    },
+    {
+      key: 'hoistDutyFactor',
+      label: 'Duty Factor (J12)',
+      unit: '',
+      type: 'number',
+      defaultValue: 1.5,
+      required: true,
+      min: 0.1,
+      description: 'Brake torque safety factor',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed (RPM)',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 935,
+      required: true,
+      min: 100,
+      description: 'Motor full-load speed',
+    },
+    {
+      key: 'selectedBrakeId',
+      label: 'Selected Brake Model',
+      unit: '',
+      type: 'select',
+      defaultValue: 'mdt-200-18',
+      required: true,
+      options: BRAKE_CATALOG.map((b) => ({
+        label: `${b.model} (${b.ratedTorqueKgm} kg-m / ${b.ratedTorqueNm} N-m)`,
+        value: b.id,
+      })),
+      description: 'Catalog brake',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      type: 'number',
+      defaultValue: 20.0,
+      required: true,
+      min: 0.1,
+      description: 'Selected brake rated torque',
+    },
   ],
 
   outputs: [
-    { key: 'mechanicalPowerKw', label: 'Net Mechanical Hoist Power (J35)', unit: 'kW', description: 'Power without service/duty multiplying factors' },
-    { key: 'requiredBrakeTorqueKgm', label: 'Required Brake Torque (kg-m)', unit: 'kg-m', description: 'Calculated holding torque in kg-m (F39)' },
-    { key: 'requiredBrakeTorqueNm', label: 'Required Brake Torque (N-m)', unit: 'N-m', description: 'Calculated holding torque in N-m (I39)' },
-    { key: 'selectedBrakeTorqueKgm', label: 'Selected Brake Torque', unit: 'kg-m', description: 'Torque rating of selected brake' },
+    {
+      key: 'mechanicalPowerKw',
+      label: 'Net Mechanical Hoist Power (J35)',
+      unit: 'kW',
+      description: 'Power without service/duty multiplying factors',
+    },
+    {
+      key: 'requiredBrakeTorqueKgm',
+      label: 'Required Brake Torque (kg-m)',
+      unit: 'kg-m',
+      description: 'Calculated holding torque in kg-m (F39)',
+    },
+    {
+      key: 'requiredBrakeTorqueNm',
+      label: 'Required Brake Torque (N-m)',
+      unit: 'N-m',
+      description: 'Calculated holding torque in N-m (I39)',
+    },
+    {
+      key: 'selectedBrakeTorqueKgm',
+      label: 'Selected Brake Torque',
+      unit: 'kg-m',
+      description: 'Torque rating of selected brake',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'main-hoist-motor', sourceKey: 'requiredMotorKw', targetKey: 'requiredMotorKw', label: 'Motor Power' },
+    {
+      sourceToolId: 'main-hoist-motor',
+      sourceKey: 'requiredMotorKw',
+      targetKey: 'requiredMotorKw',
+      label: 'Motor Power',
+    },
     { sourceToolId: 'main-hoist-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
-    { sourceToolId: 'master', sourceKey: 'ambientDeratingFactor', targetKey: 'ambientDeratingFactor', label: 'Ambient Derating' },
-    { sourceToolId: 'master', sourceKey: 'hoistServiceFactor', targetKey: 'hoistServiceFactor', label: 'Service Factor' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'ambientDeratingFactor',
+      targetKey: 'ambientDeratingFactor',
+      label: 'Ambient Derating',
+    },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'hoistServiceFactor',
+      targetKey: 'hoistServiceFactor',
+      label: 'Service Factor',
+    },
     { sourceToolId: 'master', sourceKey: 'hoistDutyFactor', targetKey: 'hoistDutyFactor', label: 'Duty Factor' },
   ],
 
@@ -56,7 +159,7 @@ export const mainHoistBrake: CalculationToolDefinition = {
     const requiredMotorKw = assertPositiveNumber(inputs.requiredMotorKw ?? 10.4879897176, 'requiredMotorKw');
     const ambientDeratingFactor = assertPositiveNumber(inputs.ambientDeratingFactor ?? 0.95, 'ambientDeratingFactor');
     const hoistServiceFactor = assertPositiveNumber(inputs.hoistServiceFactor ?? 0.67, 'hoistServiceFactor');
-    const hoistDutyFactor = assertPositiveNumber(inputs.hoistDutyFactor ?? 1.50, 'hoistDutyFactor');
+    const hoistDutyFactor = assertPositiveNumber(inputs.hoistDutyFactor ?? 1.5, 'hoistDutyFactor');
     const motorRpm = assertPositiveNumber(inputs.motorRpm ?? 935, 'motorRpm');
 
     // If selectedBrakeId is passed, lookup or use selectedBrakeTorqueKgm

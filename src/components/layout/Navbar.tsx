@@ -21,7 +21,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentProjectName }) => {
             </div>
             <div>
               <span className="font-semibold text-slate-100 text-sm tracking-tight flex items-center gap-1.5">
-                StaticaLabs <span className="text-blue-400 font-mono text-xs px-1.5 py-0.2 rounded bg-blue-950 border border-blue-800/40">EOT</span>
+                StaticaLabs{' '}
+                <span className="text-blue-400 font-mono text-xs px-1.5 py-0.2 rounded bg-blue-950 border border-blue-800/40">
+                  EOT
+                </span>
               </span>
               <p className="text-[10px] text-slate-400">Crane Engineering Platform</p>
             </div>

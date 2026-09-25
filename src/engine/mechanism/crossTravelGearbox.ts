@@ -26,34 +26,111 @@ export const crossTravelGearbox: CalculationToolDefinition = {
   category: 'MECHANISM',
   tier: 'A',
   reviewStatus: 'TESTED',
-  description: 'Calculates the required reduction ratio for cross travel, computes actual trolley speed, and checks tolerance within +-10% range.',
+  description:
+    'Calculates the required reduction ratio for cross travel, computes actual trolley speed, and checks tolerance within +-10% range.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',
   sourceSheets: ['C.T.', 'SPEED'],
 
   inputs: [
-    { key: 'selectedWheelDiameterMm', label: 'Selected Wheel Diameter', unit: 'mm', type: 'number', defaultValue: 160.0, required: true, min: 100.0, description: 'Wheel tread diameter (H79)' },
-    { key: 'motorRpm', label: 'Motor Speed', unit: 'rpm', type: 'number', defaultValue: 860.0, required: true, min: 100.0, description: 'CT motor speed (J88)' },
-    { key: 'requiredSpeedMPerMin', label: 'Required CT Speed', unit: 'm/min', type: 'number', defaultValue: 20.0, required: true, min: 1.0, description: 'Design CT speed (J89)' },
-    { key: 'selectedGearboxId', label: 'Selected Gearbox', unit: '', type: 'select', defaultValue: 'gb-ct-vr250-21.5', required: true, options: GEARBOX_CATALOG.filter(g => g.application === 'CROSS_TRAVEL').map(g => ({ label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`, value: g.id })), description: 'Catalog gearbox' },
-    { key: 'selectedRatio', label: 'Selected Gearbox Ratio', unit: '', type: 'number', defaultValue: 21.5, required: true, min: 1.0, description: 'Actual ratio of chosen CT reducer (D97)' },
+    {
+      key: 'selectedWheelDiameterMm',
+      label: 'Selected Wheel Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 160.0,
+      required: true,
+      min: 100.0,
+      description: 'Wheel tread diameter (H79)',
+    },
+    {
+      key: 'motorRpm',
+      label: 'Motor Speed',
+      unit: 'rpm',
+      type: 'number',
+      defaultValue: 860.0,
+      required: true,
+      min: 100.0,
+      description: 'CT motor speed (J88)',
+    },
+    {
+      key: 'requiredSpeedMPerMin',
+      label: 'Required CT Speed',
+      unit: 'm/min',
+      type: 'number',
+      defaultValue: 20.0,
+      required: true,
+      min: 1.0,
+      description: 'Design CT speed (J89)',
+    },
+    {
+      key: 'selectedGearboxId',
+      label: 'Selected Gearbox',
+      unit: '',
+      type: 'select',
+      defaultValue: 'gb-ct-vr250-21.5',
+      required: true,
+      options: GEARBOX_CATALOG.filter((g) => g.application === 'CROSS_TRAVEL').map((g) => ({
+        label: `${g.model} (Ratio: ${g.ratio}, Rating: ${g.ratedPowerKw} kW)`,
+        value: g.id,
+      })),
+      description: 'Catalog gearbox',
+    },
+    {
+      key: 'selectedRatio',
+      label: 'Selected Gearbox Ratio',
+      unit: '',
+      type: 'number',
+      defaultValue: 21.5,
+      required: true,
+      min: 1.0,
+      description: 'Actual ratio of chosen CT reducer (D97)',
+    },
   ],
 
   outputs: [
     { key: 'requiredRatio', label: 'Required Gear Ratio', unit: '', description: 'Exact reduction ratio (J91)' },
     { key: 'selectedRatio', label: 'Selected Gear Ratio', unit: '', description: 'Gearbox catalog ratio' },
-    { key: 'actualSpeedMPerMin', label: 'Actual CT Speed', unit: 'm/min', description: 'Actual speed delivered at wheels (H100)' },
-    { key: 'allowedSpeedMinMPerMin', label: 'Allowed Minimum Speed (-10%)', unit: 'm/min', description: 'Lower allowed speed bound' },
-    { key: 'allowedSpeedMaxMPerMin', label: 'Allowed Maximum Speed (+10%)', unit: 'm/min', description: 'Upper allowed speed bound' },
+    {
+      key: 'actualSpeedMPerMin',
+      label: 'Actual CT Speed',
+      unit: 'm/min',
+      description: 'Actual speed delivered at wheels (H100)',
+    },
+    {
+      key: 'allowedSpeedMinMPerMin',
+      label: 'Allowed Minimum Speed (-10%)',
+      unit: 'm/min',
+      description: 'Lower allowed speed bound',
+    },
+    {
+      key: 'allowedSpeedMaxMPerMin',
+      label: 'Allowed Maximum Speed (+10%)',
+      unit: 'm/min',
+      description: 'Upper allowed speed bound',
+    },
   ],
 
   dependencies: [
-    { sourceToolId: 'cross-travel-wheel', sourceKey: 'selectedWheelDiameterMm', targetKey: 'selectedWheelDiameterMm', label: 'Wheel Diameter' },
+    {
+      sourceToolId: 'cross-travel-wheel',
+      sourceKey: 'selectedWheelDiameterMm',
+      targetKey: 'selectedWheelDiameterMm',
+      label: 'Wheel Diameter',
+    },
     { sourceToolId: 'cross-travel-motor', sourceKey: 'selectedMotorRpm', targetKey: 'motorRpm', label: 'Motor Speed' },
-    { sourceToolId: 'master', sourceKey: 'crossTravelSpeedMPerMin', targetKey: 'requiredSpeedMPerMin', label: 'CT Speed' },
+    {
+      sourceToolId: 'master',
+      sourceKey: 'crossTravelSpeedMPerMin',
+      targetKey: 'requiredSpeedMPerMin',
+      label: 'CT Speed',
+    },
   ],
 
   calculate(inputs: Record<string, any>): CalculationResult {
-    const selectedWheelDiameterMm = assertPositiveNumber(inputs.selectedWheelDiameterMm ?? 160.0, 'selectedWheelDiameterMm');
+    const selectedWheelDiameterMm = assertPositiveNumber(
+      inputs.selectedWheelDiameterMm ?? 160.0,
+      'selectedWheelDiameterMm',
+    );
     const motorRpm = assertPositiveNumber(inputs.motorRpm ?? 860.0, 'motorRpm');
     const requiredSpeedMPerMin = assertPositiveNumber(inputs.requiredSpeedMPerMin ?? 20.0, 'requiredSpeedMPerMin');
 
@@ -66,7 +143,7 @@ export const crossTravelGearbox: CalculationToolDefinition = {
     const requiredRatio = (Math.PI * selectedWheelDiameterMm * motorRpm) / (requiredSpeedMPerMin * 1000);
 
     // H100 = (J88 / D97) * (3.142 * H79 / 1000)
-    const actualSpeedMPerMin = (motorRpm / selectedRatio) * (3.142 * selectedWheelDiameterMm / 1000);
+    const actualSpeedMPerMin = (motorRpm / selectedRatio) * ((3.142 * selectedWheelDiameterMm) / 1000);
 
     const allowedSpeedMinMPerMin = requiredSpeedMPerMin * 0.9;
     const allowedSpeedMaxMPerMin = requiredSpeedMPerMin * 1.1;
