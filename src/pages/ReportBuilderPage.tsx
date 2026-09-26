@@ -5,9 +5,6 @@ import { Project, ToolInstance } from '../types/project';
 import { getToolDefinition } from '../engine/registry';
 import { StatusBadge } from '../components/engineering/StatusBadge';
 import { CheckTable } from '../components/engineering/CheckTable';
-import { DrawingPreview } from '../components/engineering/DrawingPreview';
-import { getDrawingForToolInstance } from '../engine/drawing/registry';
-import { DrawingResult } from '../engine/drawing/types';
 import { exportProjectToExcel } from '../utils/excelExport';
 import {
   ArrowLeft,
@@ -133,13 +130,6 @@ export const ReportBuilderPage: React.FC = () => {
   }
 
   const selectedInstances = toolInstances.filter((i) => selectedIds.has(i.id));
-
-  const instancesWithDrawings = selectedInstances
-    .map((inst) => ({
-      instance: inst,
-      drawing: getDrawingForToolInstance(inst),
-    }))
-    .filter((item): item is { instance: ToolInstance; drawing: DrawingResult } => item.drawing !== null);
 
   // Determine overall status
   const overallStatus: CheckStatus = (() => {
@@ -591,46 +581,10 @@ export const ReportBuilderPage: React.FC = () => {
             )}
           </section>
 
-          {/* Section 4: Engineering Component Drawings & CAD Previews */}
-          {instancesWithDrawings.length > 0 && (
-            <section className="space-y-6">
-              <div className="border-b border-slate-200 pb-2.5">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 print:text-black">
-                    4. Component Drawings & CAD Previews ({instancesWithDrawings.length})
-                  </h2>
-                  <span className="text-[10px] font-mono text-slate-500">IS 3177 / IS 807</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Parametric cross-sections, elevations, and dimensional diagrams generated deterministically from verified calculation results.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {instancesWithDrawings.map(({ instance: inst, drawing }, idx) => (
-                  <div key={inst.id} className="space-y-2 break-inside-avoid">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-800">
-                        4.{idx + 1} {inst.displayName} — {drawing.title}
-                      </span>
-                    </div>
-                    <DrawingPreview
-                      title={drawing.title}
-                      filename={drawing.filename}
-                      svg={drawing.svg}
-                      dxf={drawing.dxf}
-                      description={drawing.description}
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Section 5: Engineering Sign-off & Signatures Box */}
+          {/* Section 4: Engineering Sign-off & Signatures Box */}
           <section className="break-inside-avoid border border-slate-200 rounded-xl p-5 bg-slate-50/50 space-y-4">
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              5. Engineering Sign-Off & Approvals
+              4. Engineering Sign-Off & Approvals
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3 text-xs">
               <div className="border-t border-slate-300 pt-2">
