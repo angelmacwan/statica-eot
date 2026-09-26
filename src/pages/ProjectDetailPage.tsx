@@ -688,21 +688,19 @@ export const ProjectDetailPage: React.FC = () => {
                           Auto-adds {missingParents.length} prerequisite{missingParents.length > 1 ? 's' : ''}
                         </div>
                       )}
-
-                      {/* Added status output */}
-                      {isAdded && addedInst?.calculationStatus && (
-                        <div className="pl-5.5 flex items-center gap-1.5 mt-0.5 group-hover:hidden">
-                          <StatusBadge status={addedInst.calculationStatus} size="sm" showIcon={false} />
-                        </div>
-                      )}
                     </div>
 
-                    {/* Right side indicator: status or 'Remove' on hover when added */}
+                    {/* Right side: status badge on the side or 'Remove' on hover */}
                     {isAdded ? (
-                      <div className="text-[11px] shrink-0">
+                      <div className="shrink-0 flex items-center">
                         <span className="hidden group-hover:inline text-[10px] font-medium text-rose-600">
                           Remove
                         </span>
+                        {addedInst?.calculationStatus && (
+                          <span className="group-hover:hidden">
+                            <StatusBadge status={addedInst.calculationStatus} size="sm" showIcon={false} />
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition shrink-0 font-medium">
