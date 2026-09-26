@@ -325,10 +325,8 @@ export const ProjectDetailPage: React.FC = () => {
         runningInstances.push(newInst);
       }
 
-      // Batch persist to Firestore
-      await addToolInstancesBatch(projectId, createdInstances);
+      // 1. Immediately update local state in 0ms for instant UI reaction
       setToolInstances(runningInstances);
-      setSaveStatus('saved');
 
       // Inform user of auto-added dependencies
       const targetDef = getToolDefinition(targetToolId);
@@ -343,7 +341,11 @@ export const ProjectDetailPage: React.FC = () => {
       setTimeout(() => {
         const elem = document.getElementById(`report-tool-${targetToolId}`);
         if (elem) elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      }, 50);
+
+      // 2. Persist to Firestore in the background
+      await addToolInstancesBatch(projectId, createdInstances);
+      setSaveStatus('saved');
     } catch (err) {
       console.error('Failed to add tools:', err);
       setSaveStatus('error');
@@ -357,11 +359,13 @@ export const ProjectDetailPage: React.FC = () => {
     e.stopPropagation();
     if (!projectId) return;
 
+    // Immediately remove from UI in 0ms
+    const remaining = toolInstances.filter((i) => i.id !== instanceId);
+    setToolInstances(remaining);
     setSaveStatus('saving');
+
     try {
       await deleteToolInstance(projectId, instanceId);
-      const remaining = toolInstances.filter((i) => i.id !== instanceId);
-      setToolInstances(remaining);
       setSaveStatus('saved');
     } catch (err) {
       console.error('Failed to delete tool instance:', err);
