@@ -129,6 +129,16 @@ export const crossTravelWheel: CalculationToolDefinition = {
       min: 100.0,
       description: 'Tread diameter (H79)',
     },
+    {
+      key: 'hubBoreMm',
+      label: 'Hub Bore Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 50.0,
+      required: true,
+      min: 10.0,
+      description: 'Wheel axle/hub bore diameter',
+    },
   ],
 
   outputs: [
@@ -159,6 +169,9 @@ export const crossTravelWheel: CalculationToolDefinition = {
       description: 'Chosen tread diameter',
     },
     { key: 'wheelRpm', label: 'Wheel Rotational Speed', unit: 'rpm', description: 'V * 1000 / (3.142 * D) (G75)' },
+    { key: 'treadWidthMm', label: 'Tread Width', unit: 'mm', description: 'Catalog wheel tread width' },
+    { key: 'flangeHeightMm', label: 'Flange Height', unit: 'mm', description: 'Catalog wheel flange height' },
+    { key: 'hubBoreMm', label: 'Hub Bore Diameter', unit: 'mm', description: 'Wheel axle/hub bore diameter' },
   ],
 
   dependencies: [
@@ -190,6 +203,9 @@ export const crossTravelWheel: CalculationToolDefinition = {
       inputs.selectedWheelDiameterMm ?? catalogItem?.nominalDiameterMm ?? 160.0,
       'selectedWheelDiameterMm',
     );
+    const hubBoreMm = assertPositiveNumber(inputs.hubBoreMm ?? 50.0, 'hubBoreMm');
+    const treadWidthMm = catalogItem?.treadWidthMm ?? 65.0;
+    const flangeHeightMm = catalogItem?.flangeHeightMm ?? 20.0;
 
     // C60 = (J54 * J56 / (J57 / 2)) + (J58 / J57)
     const pMaxTonnes = (loadDistributionMax * swlTonnes) / (wheelCount / 2) + crabWeightTonnes / wheelCount;
@@ -297,6 +313,7 @@ export const crossTravelWheel: CalculationToolDefinition = {
         usefulRailWidthMm: { value: usefulRailWidthMm, unit: 'mm' },
         selectedWheelDiameterMm: { value: selectedWheelDiameterMm, unit: 'mm' },
         selectedWheelId: { value: selectedWheelId, unit: '' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm' },
       },
       derived: {
         pMaxTonnes: { value: pMaxTonnes, unit: 't' },
@@ -313,6 +330,9 @@ export const crossTravelWheel: CalculationToolDefinition = {
         requiredWheelDiameterMm: { value: requiredWheelDiameterMm, unit: 'mm', label: 'Required Wheel Diameter' },
         selectedWheelDiameterMm: { value: selectedWheelDiameterMm, unit: 'mm', label: 'Selected Wheel Diameter' },
         wheelRpm: { value: wheelRpm, unit: 'rpm', label: 'Wheel RPM' },
+        treadWidthMm: { value: treadWidthMm, unit: 'mm', label: 'Tread Width' },
+        flangeHeightMm: { value: flangeHeightMm, unit: 'mm', label: 'Flange Height' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm', label: 'Hub Bore Diameter' },
       },
       checks,
       steps,

@@ -139,6 +139,16 @@ export const longTravelWheel: CalculationToolDefinition = {
       min: 100.0,
       description: 'Tread diameter (H80)',
     },
+    {
+      key: 'hubBoreMm',
+      label: 'Hub Bore Diameter',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 60.0,
+      required: true,
+      min: 10.0,
+      description: 'Wheel axle/hub bore diameter',
+    },
   ],
 
   outputs: [
@@ -169,6 +179,9 @@ export const longTravelWheel: CalculationToolDefinition = {
       description: 'Chosen tread diameter',
     },
     { key: 'wheelRpm', label: 'Wheel Rotational Speed', unit: 'rpm', description: 'V * 1000 / (3.142 * D) (G76)' },
+    { key: 'treadWidthMm', label: 'Tread Width', unit: 'mm', description: 'Catalog wheel tread width' },
+    { key: 'flangeHeightMm', label: 'Flange Height', unit: 'mm', description: 'Catalog wheel flange height' },
+    { key: 'hubBoreMm', label: 'Hub Bore Diameter', unit: 'mm', description: 'Wheel axle/hub bore diameter' },
   ],
 
   dependencies: [
@@ -202,6 +215,9 @@ export const longTravelWheel: CalculationToolDefinition = {
       inputs.selectedWheelDiameterMm ?? catalogItem?.nominalDiameterMm ?? 200.0,
       'selectedWheelDiameterMm',
     );
+    const hubBoreMm = assertPositiveNumber(inputs.hubBoreMm ?? 60.0, 'hubBoreMm');
+    const treadWidthMm = catalogItem?.treadWidthMm ?? 75.0;
+    const flangeHeightMm = catalogItem?.flangeHeightMm ?? 25.0;
 
     // C61 = ((J54 - J55) * (J58 + J56)) / (J54 * J57 / 2) + (J59 - J58) / J57
     // Sample golden values: Pmax = 8.35 t, Pmin = 3.15 t
@@ -310,6 +326,7 @@ export const longTravelWheel: CalculationToolDefinition = {
         longTravelSpeedMPerMin: { value: longTravelSpeedMPerMin, unit: 'm/min' },
         selectedWheelDiameterMm: { value: selectedWheelDiameterMm, unit: 'mm' },
         selectedWheelId: { value: selectedWheelId, unit: '' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm' },
       },
       derived: {
         pMaxTonnes: { value: pMaxTonnes, unit: 't' },
@@ -326,6 +343,9 @@ export const longTravelWheel: CalculationToolDefinition = {
         requiredWheelDiameterMm: { value: requiredWheelDiameterMm, unit: 'mm', label: 'Required Wheel Diameter' },
         selectedWheelDiameterMm: { value: selectedWheelDiameterMm, unit: 'mm', label: 'Selected Wheel Diameter' },
         wheelRpm: { value: wheelRpm, unit: 'rpm', label: 'Wheel RPM' },
+        treadWidthMm: { value: treadWidthMm, unit: 'mm', label: 'Tread Width' },
+        flangeHeightMm: { value: flangeHeightMm, unit: 'mm', label: 'Flange Height' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm', label: 'Hub Bore Diameter' },
       },
       checks,
       steps,

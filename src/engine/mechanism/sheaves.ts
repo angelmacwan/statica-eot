@@ -91,6 +91,26 @@ export const sheaves: CalculationToolDefinition = {
       min: 50.0,
       description: 'Pitch diameter of equalizing sheave',
     },
+    {
+      key: 'sheaveGrooveWidthMm',
+      label: 'Sheave Groove Width',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 24.0,
+      required: true,
+      min: 5.0,
+      description: 'Rim groove width for wire rope',
+    },
+    {
+      key: 'hubBoreMm',
+      label: 'Sheave Hub Bore',
+      unit: 'mm',
+      type: 'number',
+      defaultValue: 50.0,
+      required: true,
+      min: 10.0,
+      description: 'Sheave bearing / pin bore diameter',
+    },
   ],
 
   outputs: [
@@ -118,6 +138,8 @@ export const sheaves: CalculationToolDefinition = {
       unit: 'mm',
       description: 'Catalog/drawing equalizer sheave diameter',
     },
+    { key: 'sheaveGrooveWidthMm', label: 'Sheave Groove Width', unit: 'mm', description: 'Groove rim width' },
+    { key: 'hubBoreMm', label: 'Sheave Hub Bore', unit: 'mm', description: 'Bore diameter' },
   ],
 
   dependencies: [
@@ -141,6 +163,8 @@ export const sheaves: CalculationToolDefinition = {
       inputs.selectedEqualizingSheaveMm ?? 200.0,
       'selectedEqualizingSheaveMm',
     );
+    const sheaveGrooveWidthMm = assertPositiveNumber(inputs.sheaveGrooveWidthMm ?? 24.0, 'sheaveGrooveWidthMm');
+    const hubBoreMm = assertPositiveNumber(inputs.hubBoreMm ?? 50.0, 'hubBoreMm');
 
     // H142 = 12 * J137 * J138 * J139 * J140
     const requiredMainSheaveMm = 12 * ropeDiameterMm * hoistDutyFactor * sheaveFactor1 * sheaveFactor2;
@@ -224,6 +248,8 @@ export const sheaves: CalculationToolDefinition = {
         sheaveFactor2: { value: sheaveFactor2, unit: '' },
         selectedMainSheaveMm: { value: selectedMainSheaveMm, unit: 'mm' },
         selectedEqualizingSheaveMm: { value: selectedEqualizingSheaveMm, unit: 'mm' },
+        sheaveGrooveWidthMm: { value: sheaveGrooveWidthMm, unit: 'mm' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm' },
       },
       derived: {},
       outputs: {
@@ -239,6 +265,8 @@ export const sheaves: CalculationToolDefinition = {
           unit: 'mm',
           label: 'Selected Equalizer Diameter',
         },
+        sheaveGrooveWidthMm: { value: sheaveGrooveWidthMm, unit: 'mm', label: 'Sheave Groove Width' },
+        hubBoreMm: { value: hubBoreMm, unit: 'mm', label: 'Sheave Hub Bore' },
       },
       checks,
       steps,

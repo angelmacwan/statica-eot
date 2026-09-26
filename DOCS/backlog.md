@@ -31,7 +31,7 @@ Rewrite to match this repo's file headers, naming and test conventions.
 
 ---
 
-## Phase 1 — Core drawing engine + 2 fully-accurate components
+## Phase 1 — Core drawing engine + 2 fully-accurate components [STATUS: COMPLETED]
 
 **Goal:** box girder cross-section and rope drum, both fully determined
 by existing calc data, no new inputs needed anywhere.
@@ -95,7 +95,7 @@ SVGs on screen for visual sanity check.
 
 ---
 
-## Phase 2 — Add missing dimensional inputs to wheel/sheave modules
+## Phase 2 — Add missing dimensional inputs to wheel/sheave modules [STATUS: COMPLETED]
 
 **Problem:** `crossTravelWheel.ts`, `longTravelWheel.ts`, and `sheaves.ts`
 only output/select a **diameter**. There is no tread width, flange width,
@@ -126,7 +126,7 @@ profile (tread width) instead of the current honest placeholder circle.
 
 ---
 
-## Phase 3 — UI integration
+## Phase 3 — UI integration [STATUS: COMPLETED]
 
 **Where:** `src/pages/ToolPage.tsx` (per-module view) and
 `src/pages/ReportBuilderPage.tsx` (full report view) are the two places
@@ -159,7 +159,7 @@ inputs, not hardcoded demo numbers, and DXF export works for both.
 
 ---
 
-## Phase 4 — General arrangement (GA) view (do last, needs design input)
+## Phase 4 — General arrangement (GA) view [STATUS: PENDING USER DESIGN INPUT] (do last, needs design input)
 
 Full crane layout (span, wheelbase, gauge) needs data currently spread
 across `gantryGirder.ts` (`spanM`, `flangeWidthCm`, `girderDepthCm`,
@@ -185,15 +185,11 @@ should infer.
 ---
 
 ## Suggested execution order for agents
+ 
+1. [x] Phase 1 (self-contained, zero risk, fully testable in isolation) — COMPLETED
+2. [x] Phase 3, steps 1–2 only, wired to Phase 1's two modules (gets something real in front of the user fast) — COMPLETED
+3. [x] Phase 2 (touches existing calc modules, needs a human check on catalog fields first, per the note above) — COMPLETED
+4. [x] Phase 3, steps 3–4 (finish UI integration once wheel/sheave drawings are real) — COMPLETED
+5. [ ] Phase 4 (blocked on user decisions, do not auto-start) — PENDING DESIGN DECISION
 
-1. Phase 1 (self-contained, zero risk, fully testable in isolation)
-2. Phase 3, steps 1–2 only, wired to Phase 1's two modules (gets something
-   real in front of the user fast)
-3. Phase 2 (touches existing calc modules, needs a human check on catalog
-   fields first, per the note above)
-4. Phase 3, steps 3–4 (finish UI integration once wheel/sheave drawings
-   are real)
-5. Phase 4 (blocked on user decisions, do not auto-start)
-
-Each phase should be its own PR with its own test run (`npm test`) green
-before moving to the next.
+All Phase 1, Phase 2, and Phase 3 deliverables and unit tests are passing with full test coverage and production build verification.

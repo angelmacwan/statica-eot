@@ -9,6 +9,8 @@ import { NumericInput } from '../components/engineering/NumericInput';
 import { StatusBadge } from '../components/engineering/StatusBadge';
 import { CheckTable } from '../components/engineering/CheckTable';
 import { CalculationTraceView } from '../components/engineering/CalculationTraceView';
+import { DrawingPreview } from '../components/engineering/DrawingPreview';
+import { getDrawingForToolInstance } from '../engine/drawing/registry';
 import { ArrowLeft, FileSpreadsheet } from 'lucide-react';
 
 export const ToolPage: React.FC = () => {
@@ -136,6 +138,12 @@ export const ToolPage: React.FC = () => {
 
   const toolDef = getToolDefinition(instance.toolId);
   if (!toolDef) return null;
+
+  const drawingResult = getDrawingForToolInstance({
+    ...instance,
+    inputs,
+    calculationResult: result || undefined,
+  });
 
   return (
     <div className="min-h-screen bg-[#fbfbfa] text-slate-900 flex flex-col">
@@ -283,6 +291,17 @@ export const ToolPage: React.FC = () => {
                 {/* Calculation Trace View */}
                 <CalculationTraceView steps={result.steps} sourceLineage={result.sourceLineage} />
               </div>
+            )}
+
+            {/* Engineering Drawing / CAD Preview */}
+            {drawingResult && (
+              <DrawingPreview
+                title={drawingResult.title}
+                filename={drawingResult.filename}
+                svg={drawingResult.svg}
+                dxf={drawingResult.dxf}
+                description={drawingResult.description}
+              />
             )}
           </div>
         </div>
