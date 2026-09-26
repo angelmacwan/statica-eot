@@ -31,6 +31,9 @@ import {
   Settings2,
   Layers,
   Sparkles,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
 } from 'lucide-react';
 
 export const ProjectDetailPage: React.FC = () => {
@@ -939,6 +942,63 @@ export const ProjectDetailPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Executive Compliance Status Section with Background Color */}
+            <div
+              className={`p-4 rounded-xl border transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                overallStatus === 'PASS'
+                  ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950 shadow-2xs'
+                  : overallStatus === 'WARNING'
+                  ? 'bg-amber-50/90 border-amber-200 text-amber-950 shadow-2xs'
+                  : 'bg-rose-50/90 border-rose-300 text-rose-950 shadow-2xs'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 shadow-2xs ${
+                    overallStatus === 'PASS'
+                      ? 'bg-emerald-600 text-white'
+                      : overallStatus === 'WARNING'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-rose-600 text-white'
+                  }`}
+                >
+                  {overallStatus === 'PASS' ? (
+                    <CheckCircle2 className="w-5 h-5" />
+                  ) : overallStatus === 'WARNING' ? (
+                    <AlertTriangle className="w-5 h-5" />
+                  ) : (
+                    <XCircle className="w-5 h-5" />
+                  )}
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider">
+                      {overallStatus === 'PASS'
+                        ? 'Compliance Status: Fully Compliant (PASS)'
+                        : overallStatus === 'WARNING'
+                        ? 'Compliance Status: Engineering Review Required (WARNING)'
+                        : 'Compliance Status: Safety Criterion Failed (FAIL)'}
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/80 border border-slate-200/60 font-semibold text-slate-700">
+                      IS 3177 / IS 807
+                    </span>
+                  </div>
+                  <p className="text-xs opacity-90 mt-0.5">
+                    {overallStatus === 'PASS'
+                      ? `All ${toolInstances.length} active calculation modules meet code-mandated safety factors and allowable stress/load criteria.`
+                      : overallStatus === 'WARNING'
+                      ? 'One or more modules operate near permissible thresholds. Verify catalog selections and service factors.'
+                      : 'Critical design or safety criteria failed. Inspect highlighted modules below and increase component ratings.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="shrink-0 flex items-center gap-2">
+                <StatusBadge status={overallStatus} size="md" />
+              </div>
+            </div>
+
             {/* Section 1: Executive Master Crane Specifications */}
             <section className="space-y-3">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -1236,12 +1296,31 @@ export const ProjectDetailPage: React.FC = () => {
                           </div>
                         )}
 
-                        {/* Code Compliance Checks */}
+                        {/* Code Compliance Checks with Status Background */}
                         {result && result.checks && result.checks.length > 0 && (
-                          <div>
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
-                              IS 3177 / IS 807 Compliance Checks
-                            </span>
+                          <div
+                            className={`p-4 rounded-xl border space-y-2.5 transition ${
+                              inst.calculationStatus === 'PASS'
+                                ? 'bg-emerald-50/40 border-emerald-200/80'
+                                : inst.calculationStatus === 'FAIL'
+                                ? 'bg-rose-50/60 border-rose-300'
+                                : 'bg-amber-50/50 border-amber-200'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={`text-[11px] font-bold uppercase tracking-wider ${
+                                  inst.calculationStatus === 'PASS'
+                                    ? 'text-emerald-950'
+                                    : inst.calculationStatus === 'FAIL'
+                                    ? 'text-rose-950'
+                                    : 'text-amber-950'
+                                }`}
+                              >
+                                IS 3177 / IS 807 Compliance Checks
+                              </span>
+                              <StatusBadge status={inst.calculationStatus} size="sm" />
+                            </div>
                             <CheckTable checks={result.checks} />
                           </div>
                         )}
