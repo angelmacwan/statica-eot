@@ -41,8 +41,34 @@
 }
 
 @media print {
-  body {
+  html, body, #root {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
     background-color: white !important;
     color: black !important;
   }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  /* Force background colors, badges, and borders to render in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Prevent page breaks inside cards and tables */
+  .break-inside-avoid,
+  .print-break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
 }
+

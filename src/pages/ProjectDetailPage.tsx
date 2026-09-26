@@ -17,11 +17,13 @@ import { CalculationTraceView } from '../components/engineering/CalculationTrace
 import { MASTER_SPEC_INPUT_DEFINITIONS } from '../engine/master/masterSpecifications';
 import { CORE_TOOLS, getToolDefinition } from '../engine/registry';
 import { getMissingDependencies, buildToolInputs } from '../engine/dependencies';
+import { exportProjectToExcel } from '../utils/excelExport';
 import {
   Sliders,
   Plus,
   Trash2,
   Printer,
+  FileSpreadsheet,
   RotateCw,
   Search,
   X,
@@ -433,6 +435,24 @@ export const ProjectDetailPage: React.FC = () => {
       setRecalculatingAll(false);
     }
   };
+
+  /**
+   * Opens the dedicated clean engineering report in a new tab and triggers print/PDF
+   */
+  const handlePrintPdf = () => {
+    if (!projectId) return;
+    window.open(`/projects/${projectId}/report?print=true`, '_blank');
+  };
+
+  /**
+   * Downloads the complete calculation suite as an Excel (.xlsx) workbook
+   */
+  const handleDownloadExcel = () => {
+    if (!project) return;
+    exportProjectToExcel(project, toolInstances);
+    showToast('Calculation suite exported to Excel (.xlsx)');
+  };
+
 
   // Filter tools for the left sidebar list
   const filteredTools = useMemo(() => {
@@ -865,12 +885,21 @@ export const ProjectDetailPage: React.FC = () => {
               )}
 
               <button
-                onClick={() => window.print()}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-medium rounded-lg transition shadow-xs"
-                title="Print or export as PDF"
+                onClick={handleDownloadExcel}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-medium rounded-lg transition shadow-2xs"
+                title="Download complete calculation suite in Excel format (.xlsx)"
               >
-                <Printer className="w-3.5 h-3.5 text-slate-500" />
-                Print / PDF
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Download Excel</span>
+              </button>
+
+              <button
+                onClick={handlePrintPdf}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white border border-slate-900 text-xs font-medium rounded-lg transition shadow-xs"
+                title="Open dedicated clean report in new tab and print / save as PDF"
+              >
+                <Printer className="w-3.5 h-3.5 text-slate-300" />
+                <span>Print / PDF</span>
               </button>
             </div>
           </div>
