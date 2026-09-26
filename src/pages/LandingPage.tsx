@@ -32,8 +32,8 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================================= */}
       {/* Navigation Bar                                                            */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 transition-colors">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 py-3.5 transition-colors">
+        <div className="w-full flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center group-hover:bg-slate-800 transition shadow-xs">
               <Cog className="w-4.5 h-4.5 stroke-[2.2]" />

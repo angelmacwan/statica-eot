@@ -155,8 +155,8 @@ export const ReportBuilderPage: React.FC = () => {
       {/* ========================================================================= */}
       {/* Top Floating Control Bar (Hidden when printing/PDF)                       */}
       {/* ========================================================================= */}
-      <header className="print:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 px-4 py-3 shadow-2xs">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <header className="print:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 shadow-2xs">
+        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <Link
               to={`/projects/${projectId}`}
@@ -211,7 +211,7 @@ export const ReportBuilderPage: React.FC = () => {
 
         {/* Optional Filter Tray */}
         {showFilterTray && (
-          <div className="max-w-5xl mx-auto mt-3 pt-3 border-t border-slate-100 animate-in fade-in slide-in-from-top-1">
+          <div className="w-full mt-3 pt-3 border-t border-slate-100 animate-in fade-in slide-in-from-top-1">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">
                 Select Modules for Final Report ({selectedIds.size} included)

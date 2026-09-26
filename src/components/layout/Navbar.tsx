@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentProjectName, autoSaveStat
 
   return (
     <header className="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-50 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/projects" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center group-hover:bg-slate-800 transition shadow-xs">

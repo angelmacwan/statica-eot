@@ -13,8 +13,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
+      <div className="min-h-screen bg-[#fbfbfa] flex flex-col items-center justify-center gap-3">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-900 border-t-transparent" />
+        <span className="text-xs text-slate-500 font-medium">Verifying authentication...</span>
       </div>
     );
   }
