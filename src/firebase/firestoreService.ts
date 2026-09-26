@@ -1,4 +1,16 @@
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  setDoc,
+  updateDoc,
+  where,
+  writeBatch,
+} from 'firebase/firestore';
 import { db } from './firebase';
 import { Project, ToolInstance } from '../types/project';
 import { EngineeringReport } from '../types/report';
@@ -6,39 +18,17 @@ import { DEFAULT_MASTER_SPECIFICATIONS } from '../engine/master/masterSpecificat
 import { getToolDefinition } from '../engine/registry';
 
 const ENGINE_VERSION = '0.1.0';
+const MAX_BATCH_WRITES = 500;
 
-// Helper for localStorage fallback
-const LOCAL_STORAGE_KEY = 'statica_eot_offline_projects';
-
-function getLocalProjects(): Record<
-  string,
-  { project: Project; tools: Record<string, ToolInstance>; reports: Record<string, EngineeringReport> }
-> {
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveLocalProjects(data: any) {
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-  } catch (err) {
-    console.warn('LocalStorage save failed:', err);
-  }
-}
-
+/** Firestore is the only persistence layer for project data. */
 export async function createProject(
   ownerUid: string,
   projectName: string,
   craneType: 'EOT' | 'Gantry' | 'Other' = 'EOT',
-  description: string = '',
+  description = '',
 ): Promise<Project> {
   const projectId = `proj-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   const now = Date.now();
-
   const newProject: Project = {
     id: projectId,
     ownerUid,
@@ -54,117 +44,61 @@ export async function createProject(
     updatedAt: now,
   };
 
-  try {
-    const projectRef = doc(db, 'projects', projectId);
-    await setDoc(projectRef, newProject);
-  } catch (err) {
-    console.warn('Firestore createProject failed, using local storage cache:', err);
-  }
-
-  // Update local cache
-  const local = getLocalProjects();
-  local[projectId] = { project: newProject, tools: {}, reports: {} };
-  saveLocalProjects(local);
-
+  await setDoc(doc(db, 'projects', projectId), newProject);
   return newProject;
 }
 
 export async function getUserProjects(ownerUid: string): Promise<Project[]> {
-  try {
-    const q = query(collection(db, 'projects'), where('ownerUid', '==', ownerUid));
-    const querySnapshot = await getDocs(q);
-    const projects: Project[] = [];
-    querySnapshot.forEach((d) => {
-      projects.push(d.data() as Project);
-    });
-    // sort newest first
-    projects.sort((a, b) => b.updatedAt - a.updatedAt);
-    if (projects.length > 0) return projects;
-  } catch (err) {
-    console.warn('Firestore getUserProjects error, falling back to local storage:', err);
-  }
-
-  // Fallback to local storage
-  const local = getLocalProjects();
-  return Object.values(local)
-    .map((item) => item.project)
-    .filter((p) => p.ownerUid === ownerUid)
-    .sort((a, b) => b.updatedAt - a.updatedAt);
+  const projectsQuery = query(collection(db, 'projects'), where('ownerUid', '==', ownerUid));
+  const snapshot = await getDocs(projectsQuery);
+  return snapshot.docs.map((item) => item.data() as Project).sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
 export async function getProject(projectId: string): Promise<Project | null> {
-  try {
-    const projectRef = doc(db, 'projects', projectId);
-    const snap = await getDoc(projectRef);
-    if (snap.exists()) {
-      return snap.data() as Project;
-    }
-  } catch (err) {
-    console.warn('Firestore getProject error, checking local:', err);
-  }
-
-  const local = getLocalProjects();
-  return local[projectId]?.project || null;
+  const snapshot = await getDoc(doc(db, 'projects', projectId));
+  return snapshot.exists() ? (snapshot.data() as Project) : null;
 }
 
 export async function updateProject(projectId: string, updates: Partial<Project>): Promise<void> {
-  const updatedData = { ...updates, updatedAt: Date.now() };
+  await updateDoc(doc(db, 'projects', projectId), { ...updates, updatedAt: Date.now() });
+}
 
-  try {
-    const projectRef = doc(db, 'projects', projectId);
-    await updateDoc(projectRef, updatedData);
-  } catch (err) {
-    console.warn('Firestore updateProject error:', err);
-  }
-
-  const local = getLocalProjects();
-  if (local[projectId]) {
-    local[projectId].project = { ...local[projectId].project, ...updatedData };
-    saveLocalProjects(local);
+async function deleteSubcollection(projectId: string, subcollection: 'toolInstances' | 'reports'): Promise<void> {
+  const snapshot = await getDocs(collection(db, 'projects', projectId, subcollection));
+  for (let start = 0; start < snapshot.docs.length; start += MAX_BATCH_WRITES) {
+    const batch = writeBatch(db);
+    snapshot.docs.slice(start, start + MAX_BATCH_WRITES).forEach((item) => batch.delete(item.ref));
+    await batch.commit();
   }
 }
 
 export async function deleteProject(projectId: string): Promise<void> {
-  try {
-    const projectRef = doc(db, 'projects', projectId);
-    await deleteDoc(projectRef);
-  } catch (err) {
-    console.warn('Firestore deleteProject error:', err);
-  }
-
-  const local = getLocalProjects();
-  delete local[projectId];
-  saveLocalProjects(local);
+  // Firestore document deletes do not cascade into subcollections.
+  await deleteSubcollection(projectId, 'toolInstances');
+  await deleteSubcollection(projectId, 'reports');
+  await deleteDoc(doc(db, 'projects', projectId));
 }
 
-// Tool Instances
 export async function addToolInstance(
   projectId: string,
   toolId: string,
   initialInputs?: Record<string, any>,
 ): Promise<ToolInstance> {
   const toolDef = getToolDefinition(toolId);
-  if (!toolDef) {
-    throw new Error(`Tool "${toolId}" not found in registry.`);
-  }
+  if (!toolDef) throw new Error(`Tool "${toolId}" not found in registry.`);
 
   const instanceId = `inst-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
   const now = Date.now();
+  const defaultInputs = Object.fromEntries(toolDef.inputs.map((input) => [input.key, input.defaultValue]));
+  const mergedInputs = { ...defaultInputs, ...initialInputs };
 
-  const defaultInputs: Record<string, any> = {};
-  for (const input of toolDef.inputs) {
-    defaultInputs[input.key] = input.defaultValue;
-  }
-  const mergedInputs = { ...defaultInputs, ...(initialInputs || {}) };
-
-  // Calculate immediately if possible
   let calculationResult;
   let status: ToolInstance['calculationStatus'] = 'READY';
   try {
     calculationResult = toolDef.calculate(mergedInputs);
     status = calculationResult.status;
-  } catch (err) {
-    console.warn('Initial calculation error:', err);
+  } catch (error) {
+    console.warn('Initial calculation error:', error);
     status = 'ERROR';
   }
 
@@ -173,10 +107,10 @@ export async function addToolInstance(
     toolId,
     toolVersion: toolDef.version,
     displayName: toolDef.name,
-    order: Date.now(),
+    order: now,
     inputs: mergedInputs,
     outputs: calculationResult
-      ? Object.fromEntries(Object.entries(calculationResult.outputs).map(([k, v]) => [k, v.value]))
+      ? Object.fromEntries(Object.entries(calculationResult.outputs).map(([key, value]) => [key, value.value]))
       : undefined,
     calculationResult,
     calculationStatus: status,
@@ -190,48 +124,42 @@ export async function addToolInstance(
     calculatedAt: now,
   };
 
-  try {
-    const instRef = doc(db, 'projects', projectId, 'toolInstances', instanceId);
-    await setDoc(instRef, newInstance);
-
-    // Also update project's toolOrder
-    const proj = await getProject(projectId);
-    if (proj) {
-      const toolOrder = [...(proj.toolOrder || []), instanceId];
-      await updateProject(projectId, { toolOrder });
-    }
-  } catch (err) {
-    console.warn('Firestore addToolInstance error:', err);
-  }
-
-  // Local storage
-  const local = getLocalProjects();
-  if (local[projectId]) {
-    local[projectId].tools[instanceId] = newInstance;
-    if (!local[projectId].project.toolOrder.includes(instanceId)) {
-      local[projectId].project.toolOrder.push(instanceId);
-    }
-    saveLocalProjects(local);
-  }
+  const projectRef = doc(db, 'projects', projectId);
+  const instanceRef = doc(db, 'projects', projectId, 'toolInstances', instanceId);
+  await runTransaction(db, async (transaction) => {
+    const project = await transaction.get(projectRef);
+    if (!project.exists()) throw new Error('Project no longer exists.');
+    const toolOrder = [...((project.data() as Project).toolOrder || []), instanceId];
+    transaction.set(instanceRef, newInstance);
+    transaction.update(projectRef, { toolOrder, updatedAt: Date.now() });
+  });
 
   return newInstance;
 }
 
-export async function getToolInstances(projectId: string): Promise<ToolInstance[]> {
-  try {
-    const colRef = collection(db, 'projects', projectId, 'toolInstances');
-    const snap = await getDocs(colRef);
-    const instances: ToolInstance[] = [];
-    snap.forEach((d) => {
-      instances.push(d.data() as ToolInstance);
-    });
-    if (instances.length > 0) return instances;
-  } catch (err) {
-    console.warn('Firestore getToolInstances error, using local:', err);
-  }
+export async function addToolInstancesBatch(
+  projectId: string,
+  newInstances: ToolInstance[],
+): Promise<ToolInstance[]> {
+  if (newInstances.length === 0) return [];
+  const projectRef = doc(db, 'projects', projectId);
+  await runTransaction(db, async (transaction) => {
+    const project = await transaction.get(projectRef);
+    if (!project.exists()) throw new Error('Project no longer exists.');
+    const existingOrder = (project.data() as Project).toolOrder || [];
+    const newOrder = [...existingOrder, ...newInstances.map((i) => i.id)];
+    for (const inst of newInstances) {
+      const instanceRef = doc(db, 'projects', projectId, 'toolInstances', inst.id);
+      transaction.set(instanceRef, inst);
+    }
+    transaction.update(projectRef, { toolOrder: newOrder, updatedAt: Date.now() });
+  });
+  return newInstances;
+}
 
-  const local = getLocalProjects();
-  return Object.values(local[projectId]?.tools || {});
+export async function getToolInstances(projectId: string): Promise<ToolInstance[]> {
+  const snapshot = await getDocs(collection(db, 'projects', projectId, 'toolInstances'));
+  return snapshot.docs.map((item) => item.data() as ToolInstance);
 }
 
 export async function updateToolInstance(
@@ -239,100 +167,39 @@ export async function updateToolInstance(
   instanceId: string,
   updates: Partial<ToolInstance>,
 ): Promise<void> {
-  const updatedData = { ...updates, updatedAt: Date.now() };
-
-  try {
-    const instRef = doc(db, 'projects', projectId, 'toolInstances', instanceId);
-    await updateDoc(instRef, updatedData);
-  } catch (err) {
-    console.warn('Firestore updateToolInstance error:', err);
-  }
-
-  const local = getLocalProjects();
-  if (local[projectId]?.tools[instanceId]) {
-    local[projectId].tools[instanceId] = {
-      ...local[projectId].tools[instanceId],
-      ...updatedData,
-    };
-    saveLocalProjects(local);
-  }
+  await updateDoc(doc(db, 'projects', projectId, 'toolInstances', instanceId), {
+    ...updates,
+    updatedAt: Date.now(),
+  });
 }
 
 export async function deleteToolInstance(projectId: string, instanceId: string): Promise<void> {
-  try {
-    const instRef = doc(db, 'projects', projectId, 'toolInstances', instanceId);
-    await deleteDoc(instRef);
-
-    const proj = await getProject(projectId);
-    if (proj) {
-      const toolOrder = (proj.toolOrder || []).filter((id) => id !== instanceId);
-      await updateProject(projectId, { toolOrder });
-    }
-  } catch (err) {
-    console.warn('Firestore deleteToolInstance error:', err);
-  }
-
-  const local = getLocalProjects();
-  if (local[projectId]?.tools[instanceId]) {
-    delete local[projectId].tools[instanceId];
-    local[projectId].project.toolOrder = local[projectId].project.toolOrder.filter((id) => id !== instanceId);
-    saveLocalProjects(local);
-  }
+  const projectRef = doc(db, 'projects', projectId);
+  const instanceRef = doc(db, 'projects', projectId, 'toolInstances', instanceId);
+  await runTransaction(db, async (transaction) => {
+    const project = await transaction.get(projectRef);
+    if (!project.exists()) throw new Error('Project no longer exists.');
+    transaction.delete(instanceRef);
+    transaction.update(projectRef, {
+      toolOrder: ((project.data() as Project).toolOrder || []).filter((id) => id !== instanceId),
+      updatedAt: Date.now(),
+    });
+  });
 }
 
-// Reports
 export async function saveReport(projectId: string, report: Omit<EngineeringReport, 'id'>): Promise<EngineeringReport> {
   const reportId = `rep-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-  const savedReport: EngineeringReport = {
-    ...report,
-    id: reportId,
-  };
-
-  try {
-    const repRef = doc(db, 'projects', projectId, 'reports', reportId);
-    await setDoc(repRef, savedReport);
-  } catch (err) {
-    console.warn('Firestore saveReport error:', err);
-  }
-
-  const local = getLocalProjects();
-  if (local[projectId]) {
-    local[projectId].reports[reportId] = savedReport;
-    saveLocalProjects(local);
-  }
-
+  const savedReport: EngineeringReport = { ...report, id: reportId };
+  await setDoc(doc(db, 'projects', projectId, 'reports', reportId), savedReport);
   return savedReport;
 }
 
 export async function getReports(projectId: string): Promise<EngineeringReport[]> {
-  try {
-    const colRef = collection(db, 'projects', projectId, 'reports');
-    const snap = await getDocs(colRef);
-    const reports: EngineeringReport[] = [];
-    snap.forEach((d) => {
-      reports.push(d.data() as EngineeringReport);
-    });
-    reports.sort((a, b) => b.generatedAt - a.generatedAt);
-    if (reports.length > 0) return reports;
-  } catch (err) {
-    console.warn('Firestore getReports error, using local:', err);
-  }
-
-  const local = getLocalProjects();
-  return Object.values(local[projectId]?.reports || {}).sort((a, b) => b.generatedAt - a.generatedAt);
+  const snapshot = await getDocs(collection(db, 'projects', projectId, 'reports'));
+  return snapshot.docs.map((item) => item.data() as EngineeringReport).sort((a, b) => b.generatedAt - a.generatedAt);
 }
 
 export async function getReport(projectId: string, reportId: string): Promise<EngineeringReport | null> {
-  try {
-    const repRef = doc(db, 'projects', projectId, 'reports', reportId);
-    const snap = await getDoc(repRef);
-    if (snap.exists()) {
-      return snap.data() as EngineeringReport;
-    }
-  } catch (err) {
-    console.warn('Firestore getReport error, checking local:', err);
-  }
-
-  const local = getLocalProjects();
-  return local[projectId]?.reports[reportId] || null;
+  const snapshot = await getDoc(doc(db, 'projects', projectId, 'reports', reportId));
+  return snapshot.exists() ? (snapshot.data() as EngineeringReport) : null;
 }

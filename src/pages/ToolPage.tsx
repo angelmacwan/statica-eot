@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getProject, updateProject, getToolInstances, updateToolInstance } from '../firebase/firestoreService';
 import { Project, ToolInstance } from '../types/project';
@@ -9,7 +9,7 @@ import { NumericInput } from '../components/engineering/NumericInput';
 import { StatusBadge } from '../components/engineering/StatusBadge';
 import { CheckTable } from '../components/engineering/CheckTable';
 import { CalculationTraceView } from '../components/engineering/CalculationTraceView';
-import { ArrowLeft, Save, FileSpreadsheet } from 'lucide-react';
+import { ArrowLeft, FileSpreadsheet } from 'lucide-react';
 
 export const ToolPage: React.FC = () => {
   const { projectId, toolInstanceId } = useParams<{ projectId: string; toolInstanceId: string }>();
@@ -19,10 +19,10 @@ export const ToolPage: React.FC = () => {
   const [instance, setInstance] = useState<ToolInstance | null>(null);
   const [inputs, setInputs] = useState<Record<string, any>>({});
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [isStale, setIsStale] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     loadData();
@@ -48,7 +48,6 @@ export const ToolPage: React.FC = () => {
 
       setInstance(targetInst);
       setInputs(targetInst.inputs || {});
-      setIsStale(targetInst.isStale || false);
 
       // Perform fresh deterministic calculation
       const toolDef = getToolDefinition(targetInst.toolId);
@@ -70,7 +69,6 @@ export const ToolPage: React.FC = () => {
   const handleInputChange = (key: string, value: any) => {
     const updatedInputs = { ...inputs, [key]: value };
     setInputs(updatedInputs);
-    setIsStale(true);
 
     // Instant local recalculation
     if (instance) {
@@ -79,41 +77,37 @@ export const ToolPage: React.FC = () => {
         try {
           const freshResult = toolDef.calculate(updatedInputs);
           setResult(freshResult);
+
+          // Auto-save to Firestore (debounced 400ms, no save button required)
+          setSaveStatus('saving');
+          if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+          autoSaveTimerRef.current = setTimeout(async () => {
+            try {
+              const outputs = Object.fromEntries(
+                Object.entries(freshResult.outputs).map(([k, v]) => [k, v.value]),
+              );
+
+              await updateToolInstance(projectId!, toolInstanceId!, {
+                inputs: updatedInputs,
+                outputs,
+                calculationResult: freshResult,
+                calculationStatus: freshResult.status,
+                calculatedRevision: (instance.inputRevision || 1) + 1,
+                inputRevision: (instance.inputRevision || 1) + 1,
+                isStale: false,
+                calculatedAt: Date.now(),
+              });
+              setSaveStatus('saved');
+            } catch (err) {
+              console.error('Auto-save error in ToolPage:', err);
+              setSaveStatus('error');
+            }
+          }, 400);
         } catch {
-          // keep previous result or error
+          // keep previous result
         }
       }
-    }
-  };
-
-  const handleSaveAndRecalculate = async () => {
-    if (!projectId || !toolInstanceId || !instance) return;
-    setSaving(true);
-    try {
-      const toolDef = getToolDefinition(instance.toolId);
-      if (!toolDef) return;
-
-      const freshResult = toolDef.calculate(inputs);
-      setResult(freshResult);
-
-      const outputs = Object.fromEntries(Object.entries(freshResult.outputs).map(([k, v]) => [k, v.value]));
-
-      await updateToolInstance(projectId, toolInstanceId, {
-        inputs,
-        outputs,
-        calculationResult: freshResult,
-        calculationStatus: freshResult.status,
-        calculatedRevision: instance.inputRevision + 1,
-        inputRevision: instance.inputRevision + 1,
-        isStale: false,
-        calculatedAt: Date.now(),
-      });
-
-      setIsStale(false);
-    } catch (err) {
-      console.error('Failed to save calculation:', err);
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -132,8 +126,8 @@ export const ToolPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
+      <div className="min-h-screen bg-[#fbfbfa] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-7 w-7 border-2 border-slate-900 border-t-transparent" />
       </div>
     );
   }
@@ -144,62 +138,51 @@ export const ToolPage: React.FC = () => {
   if (!toolDef) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      <Navbar currentProjectName={project.projectName} />
+    <div className="min-h-screen bg-[#fbfbfa] text-slate-900 flex flex-col">
+      <Navbar currentProjectName={project.projectName} autoSaveStatus={saveStatus} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center justify-between mb-4">
           <Link
             to={`/projects/${projectId}`}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Project Workspace
           </Link>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleSaveAndRecalculate}
-              disabled={saving}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition shadow-md shadow-blue-600/20"
-            >
-              <Save className="w-3.5 h-3.5" />
-              {saving ? 'Saving...' : 'Save & Calculate'}
-            </button>
-          </div>
         </div>
 
         {/* Tool Header Card */}
-        <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6 backdrop-blur">
+        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 mb-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/40 text-blue-400">
+                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">
                   {toolDef.category}
                 </span>
                 <StatusBadge status={toolDef.status || toolDef.reviewStatus} size="sm" />
                 <span className="text-[10px] font-mono text-slate-400">Version {toolDef.version}</span>
               </div>
-              <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
                 {toolDef.name}
-                {result && <StatusBadge status={isStale ? 'WARNING' : result.status} size="md" />}
+                {result && <StatusBadge status={result.status} size="md" />}
               </h1>
-              <p className="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">{toolDef.description}</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-3xl leading-relaxed">{toolDef.description}</p>
             </div>
 
-            <div className="flex flex-col items-start md:items-end gap-1.5 text-xs text-slate-400">
-              <span className="flex items-center gap-1 text-[11px] font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex flex-col items-start md:items-end gap-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1 text-[11px] font-mono bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
                 {toolDef.sourceWorkbook}
               </span>
-              <span className="text-[10px] text-slate-500">Sheets: {toolDef.sourceSheets.join(', ')}</span>
+              <span className="text-[10px] text-slate-400">Sheets: {toolDef.sourceSheets.join(', ')}</span>
             </div>
           </div>
 
           {/* Sync notification if Crab weight */}
           {toolDef.id === 'crab-weight' && result && (
-            <div className="mt-4 p-3 bg-blue-950/40 border border-blue-800/50 rounded-xl flex items-center justify-between gap-3 text-xs text-blue-200">
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-3 text-xs text-blue-900">
               <span>
                 Calculated factored crab mass:{' '}
                 <strong>
@@ -208,33 +191,29 @@ export const ToolPage: React.FC = () => {
                     : result.outputs.factoredCrabWeightTonnes?.value}{' '}
                   tonnes
                 </strong>
-                . You can synchronize this into Master Specifications.
+                . Synchronize this into Master Specifications?
               </span>
               <button
                 onClick={handleSyncCrabWeightToMaster}
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded text-xs transition shrink-0"
+                className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-xs transition shrink-0"
               >
                 Sync to Master Specs
               </button>
             </div>
           )}
 
-          {syncSuccess && <div className="mt-2 text-xs text-emerald-400 font-medium">✓ {syncSuccess}</div>}
+          {syncSuccess && <div className="mt-2 text-xs text-emerald-600 font-medium">✓ {syncSuccess}</div>}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Editable Inputs */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl">
+            <div className="p-5 bg-white border border-slate-200/90 rounded-2xl shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+                <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Engineering Inputs ({toolDef.inputs.length})
                 </h2>
-                {isStale && (
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
-                    Calculations Stale
-                  </span>
-                )}
+                <span className="text-[10px] text-slate-400">Auto-saved on change</span>
               </div>
 
               <div className="space-y-3">
@@ -254,34 +233,34 @@ export const ToolPage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             {/* Primary Outputs Card */}
             {result && (
-              <div className="p-5 bg-slate-900/60 border border-slate-800 rounded-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+              <div className="p-5 bg-white border border-slate-200/90 rounded-2xl shadow-sm space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                     Derived Engineering Outputs
                   </h2>
-                  <StatusBadge status={isStale ? 'WARNING' : result.status} size="sm" />
+                  <StatusBadge status={result.status} size="sm" />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Object.entries(result.outputs).map(([key, val]) => (
                     <div
                       key={key}
-                      className="p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl flex flex-col justify-between"
+                      className="p-3 bg-slate-50/80 border border-slate-200 rounded-xl flex flex-col justify-between"
                     >
-                      <span className="text-[11px] font-medium text-slate-400">{val.label || key}</span>
+                      <span className="text-[11px] font-medium text-slate-500">{val.label || key}</span>
                       <div className="flex items-baseline gap-1.5 mt-1">
-                        <span className="text-lg font-mono font-bold text-white tracking-tight">
+                        <span className="text-lg font-mono font-bold text-slate-900 tracking-tight">
                           {typeof val.value === 'number' ? val.value.toFixed(4) : String(val.value)}
                         </span>
-                        {val.unit && <span className="text-xs font-mono text-blue-400">{val.unit}</span>}
+                        {val.unit && <span className="text-xs font-mono text-slate-600">{val.unit}</span>}
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Checks Table */}
-                <div className="mb-5">
-                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
+                <div>
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
                     Engineering Checks & Standards Criteria
                   </h3>
                   <CheckTable checks={result.checks} />
@@ -289,8 +268,8 @@ export const ToolPage: React.FC = () => {
 
                 {/* Warnings / Discrepancy Alert */}
                 {result.warnings && result.warnings.length > 0 && (
-                  <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-xs text-amber-200 space-y-1 mb-5">
-                    <div className="font-semibold flex items-center gap-1.5 text-amber-300">
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                    <div className="font-semibold flex items-center gap-1.5 text-amber-800">
                       <span>⚠️ Engineering Review Notice</span>
                     </div>
                     {result.warnings.map((w, i) => (

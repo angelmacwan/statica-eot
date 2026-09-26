@@ -12,11 +12,11 @@ export const NumericInput: React.FC<NumericInputProps> = ({ definition, value, o
   const { label, unit, type, options, description, min, max, step } = definition;
 
   return (
-    <div className="flex flex-col gap-1.5 p-3 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">{label}</label>
+    <div className="flex flex-col gap-1.5 p-3 rounded-lg bg-white border border-slate-200/90 shadow-sm hover:border-slate-300 transition group">
+      <div className="flex items-center justify-between gap-2">
+        <label className="text-xs font-medium text-slate-700 truncate">{label}</label>
         {unit && (
-          <span className="text-xs font-mono text-blue-400 bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/40">
+          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 shrink-0">
             {unit}
           </span>
         )}
@@ -27,7 +27,7 @@ export const NumericInput: React.FC<NumericInputProps> = ({ definition, value, o
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded text-slate-100 text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+          className="w-full px-2.5 py-1.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-md text-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 disabled:opacity-50 transition shadow-sm"
         >
           {options.map((opt) => (
             <option key={String(opt.value)} value={opt.value}>
@@ -47,7 +47,7 @@ export const NumericInput: React.FC<NumericInputProps> = ({ definition, value, o
           max={max}
           step={step || 'any'}
           disabled={disabled}
-          className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded text-slate-100 font-mono text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+          className="w-full px-2.5 py-1.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-md text-slate-900 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 disabled:opacity-50 transition shadow-sm"
         />
       ) : (
         <input
@@ -55,11 +55,11 @@ export const NumericInput: React.FC<NumericInputProps> = ({ definition, value, o
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded text-slate-100 text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+          className="w-full px-2.5 py-1.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-md text-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 disabled:opacity-50 transition shadow-sm"
         />
       )}
 
-      {description && <p className="text-[11px] text-slate-400 leading-tight mt-0.5">{description}</p>}
+      {description && <p className="text-[11px] text-slate-500 leading-tight">{description}</p>}
     </div>
   );
 };

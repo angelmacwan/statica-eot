@@ -74,24 +74,24 @@ export const ProjectsPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#fbfbfa] text-slate-900 flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-              <FolderKanban className="w-6 h-6 text-blue-400" />
-              Engineering Projects
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+              <FolderKanban className="w-5 h-5 text-slate-700" />
+              Crane Projects
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-0.5">
               Select or create an EOT/Gantry crane engineering calculation workspace.
             </p>
           </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition shadow-md shadow-blue-600/20"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-lg transition shadow-sm"
           >
             <Plus className="w-4 h-4" />
             New Project
@@ -103,67 +103,70 @@ export const ProjectsPage: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search projects..."
+            placeholder="Search projects by name or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 shadow-sm"
           />
         </div>
 
         {/* Project List */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
+            <div className="animate-spin rounded-full h-7 w-7 border-2 border-slate-900 border-t-transparent" />
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="text-center py-20 bg-slate-900/40 rounded-2xl border border-slate-800/80 p-8">
-            <HardHat className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-sm font-semibold text-slate-300">No Projects Found</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-5">
-              Create your first crane calculation project to define master specifications and add mechanical tools.
+          <div className="text-center py-16 bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
+            <HardHat className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <h3 className="text-sm font-semibold text-slate-800">No Projects Found</h3>
+            <p className="text-xs text-slate-500 max-w-xs mx-auto mt-1 mb-4">
+              {search ? 'No projects match your search criteria.' : 'Create your first crane engineering calculation project to begin.'}
             </p>
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded-lg transition shadow-sm"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               Create Project
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredProjects.map((p) => (
+            {filteredProjects.map((proj) => (
               <div
-                key={p.id}
-                onClick={() => navigate(`/projects/${p.id}`)}
-                className="group relative p-5 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl transition cursor-pointer flex flex-col justify-between"
+                key={proj.id}
+                onClick={() => navigate(`/projects/${proj.id}`)}
+                className="group p-5 bg-white border border-slate-200/90 hover:border-slate-300 rounded-xl transition shadow-sm hover:shadow cursor-pointer flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-blue-950/60 border border-blue-800/40 text-blue-400">
-                      {p.craneType} Crane
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                      {proj.craneType} Crane
                     </span>
                     <button
-                      onClick={(e) => handleDelete(e, p.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-400 rounded transition"
+                      onClick={(e) => handleDelete(e, proj.id)}
+                      className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-600 rounded transition"
                       title="Delete Project"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white group-hover:text-blue-300 transition">{p.projectName}</h3>
-                  <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                    {p.description || 'No description provided.'}
+                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-slate-700 transition">
+                    {proj.projectName}
+                  </h3>
+                  <p className="text-xs text-slate-500 line-clamp-2 mt-1 mb-4">
+                    {proj.description || 'No description provided.'}
                   </p>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                  <span className="flex items-center gap-1.5 font-mono">
-                    <Calendar className="w-3 h-3 text-slate-500" />
-                    {new Date(p.updatedAt).toLocaleDateString()}
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-slate-400" />
+                    {new Date(proj.updatedAt).toLocaleDateString()}
                   </span>
-                  <span className="flex items-center gap-1 text-blue-400 font-medium group-hover:translate-x-1 transition">
+
+                  <span className="flex items-center gap-1 text-slate-800 font-medium group-hover:translate-x-0.5 transition">
                     Open <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
@@ -174,66 +177,67 @@ export const ProjectsPage: React.FC = () => {
 
         {/* Modal: New Project */}
         {showModal && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-              <h2 className="text-base font-bold text-white mb-1">Create New Project</h2>
-              <p className="text-xs text-slate-400 mb-5">Set up a crane engineering design project.</p>
+          <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-bold text-slate-900">New Crane Project</h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-slate-400 hover:text-slate-700 p-1 rounded-md"
+                >
+                  ✕
+                </button>
+              </div>
 
               <form onSubmit={handleCreateProject} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Project Name *
-                  </label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Project Name</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 10T EOT Crane - ABC Factory"
+                    placeholder="e.g. 10T EOT Crane - Billet Handling"
                     value={newProjectName}
                     onChange={(e) => setNewProjectName(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 shadow-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Crane Type
-                  </label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Crane Classification</label>
                   <select
                     value={newCraneType}
                     onChange={(e) => setNewCraneType(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 shadow-sm"
                   >
                     <option value="EOT">Electric Overhead Travelling (EOT) Crane</option>
                     <option value="Gantry">Gantry / Goliath Crane</option>
-                    <option value="Other">Special Purpose Crane</option>
+                    <option value="Other">Custom Crane Mechanism</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Project Description (Optional)
-                  </label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Description (Optional)</label>
                   <textarea
                     rows={3}
-                    placeholder="Customer, site location, duty cycle, environment notes..."
+                    placeholder="Project scope, customer reference, or site requirements..."
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 shadow-sm"
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-3">
+                <div className="flex items-center justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:text-white rounded-lg transition"
+                    className="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={creating || !newProjectName.trim()}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition shadow-md shadow-blue-600/20"
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition shadow-sm"
                   >
                     {creating ? 'Creating...' : 'Create Project'}
                   </button>

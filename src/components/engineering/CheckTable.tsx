@@ -8,13 +8,13 @@ interface CheckTableProps {
 
 export const CheckTable: React.FC<CheckTableProps> = ({ checks }) => {
   if (!checks || checks.length === 0) {
-    return <p className="text-xs text-slate-500 italic">No automated checks configured.</p>;
+    return <p className="text-xs text-slate-500 italic py-1">No automated checks configured.</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-800">
+    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
       <table className="w-full text-left text-xs border-collapse">
-        <thead className="bg-slate-950/80 text-slate-400 font-mono border-b border-slate-800">
+        <thead className="bg-slate-50/90 text-slate-500 font-medium border-b border-slate-200">
           <tr>
             <th className="py-2.5 px-3">Check / Parameter</th>
             <th className="py-2.5 px-3">Calculated / Actual</th>
@@ -23,20 +23,20 @@ export const CheckTable: React.FC<CheckTableProps> = ({ checks }) => {
             <th className="py-2.5 px-3">Engineering Assessment</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+        <tbody className="divide-y divide-slate-100">
           {checks.map((chk) => (
-            <tr key={chk.id} className="hover:bg-slate-800/30 transition">
-              <td className="py-2.5 px-3 font-medium text-slate-200">{chk.name}</td>
-              <td className="py-2.5 px-3 font-mono text-blue-300">
+            <tr key={chk.id} className="hover:bg-slate-50/50 transition">
+              <td className="py-2.5 px-3 font-medium text-slate-800">{chk.name}</td>
+              <td className="py-2.5 px-3 font-mono font-medium text-slate-900">
                 {typeof chk.actual === 'number' ? chk.actual.toFixed(3) : chk.actual} {chk.unit || ''}
               </td>
-              <td className="py-2.5 px-3 font-mono text-slate-400">
+              <td className="py-2.5 px-3 font-mono text-slate-600">
                 {chk.required ? `${chk.required} ${chk.unit || ''}` : chk.criterion}
               </td>
               <td className="py-2.5 px-3 text-center">
                 <StatusBadge status={chk.status} size="sm" />
               </td>
-              <td className="py-2.5 px-3 text-slate-300 leading-snug">{chk.message}</td>
+              <td className="py-2.5 px-3 text-slate-600 leading-snug">{chk.message}</td>
             </tr>
           ))}
         </tbody>
