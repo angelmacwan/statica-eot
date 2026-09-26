@@ -12,6 +12,10 @@
     height: 100%;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-[#fbfbfa] text-slate-900 font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -37,6 +41,12 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -71,4 +81,3 @@
     display: none !important;
   }
 }
-
