@@ -31,7 +31,7 @@ export function buildProjectExcelWorkbook(project: Project, toolInstances: ToolI
   // =========================================================================
   const master = project.masterInputs || ({} as any);
   const specsRows: (string | number)[][] = [
-    ['STATICALABS EOT CRANE ENGINEERING PLATFORM'],
+    ['Statica EOT by StaticaLabs'],
     ['Engineering Calculation Report & Specifications'],
     [],
     ['PROJECT METADATA'],

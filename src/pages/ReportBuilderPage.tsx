@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
+  Cog,
 } from 'lucide-react';
 import { CheckStatus } from '../engine/types';
 
@@ -40,7 +41,7 @@ export const ReportBuilderPage: React.FC = () => {
   useEffect(() => {
     if (project?.projectName) {
       const prevTitle = document.title;
-      document.title = `${project.projectName} - Engineering Report | StaticaLabs`;
+      document.title = `${project.projectName} - Statica EOT by StaticaLabs`;
       return () => {
         document.title = prevTitle;
       };
@@ -272,8 +273,10 @@ export const ReportBuilderPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[10px] font-mono tracking-widest uppercase text-slate-700 font-bold px-2 py-0.5 rounded bg-slate-100 border border-slate-200">
-                    {project.craneType} Crane Platform
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-semibold inline-flex items-center gap-1.5">
+                    <Cog className="w-3 h-3 stroke-[2.2] text-slate-800" />
+                    <span>Statica EOT</span>
+                    <span className="font-normal text-[9px] text-slate-500 lowercase">by StaticaLabs</span>
                   </span>
                   <span className="text-[10px] font-mono text-slate-500">IS 3177:1999 / IS 807:2006</span>
                 </div>
@@ -586,7 +589,9 @@ export const ReportBuilderPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3 text-xs">
               <div className="border-t border-slate-300 pt-2">
                 <span className="text-[10px] text-slate-500 uppercase block font-medium">Prepared By</span>
-                <span className="text-slate-900 font-semibold block mt-1">StaticaLabs EOT Platform</span>
+                <span className="text-slate-900 font-semibold block mt-1">
+                  Statica EOT <span className="font-normal text-[11px] text-slate-400">by StaticaLabs</span>
+                </span>
                 <span className="text-[10px] text-slate-400 font-mono">Deterministic Engine v{project.calculationEngineVersion}</span>
               </div>
               <div className="border-t border-slate-300 pt-2">
@@ -605,11 +610,13 @@ export const ReportBuilderPage: React.FC = () => {
           {/* Document Footer & Disclaimer */}
           <footer className="border-t border-slate-200 pt-5 text-[10px] text-slate-500 space-y-1.5 break-inside-avoid">
             <div className="flex justify-between items-center font-mono font-medium pb-1.5 border-b border-slate-100">
-              <span className="text-slate-800">{project.projectName} · StaticaLabs EOT Platform</span>
+              <span className="text-slate-800">
+                {project.projectName} · Statica EOT <span className="font-normal text-slate-400">by StaticaLabs</span>
+              </span>
               <span>IS 3177:1999 / IS 807:2006</span>
             </div>
             <p>
-              This calculation report was generated deterministically by the StaticaLabs EOT Crane Engineering Platform
+              This calculation report was generated deterministically by Statica EOT by StaticaLabs
               (Engine version {project.calculationEngineVersion}). All calculations conform to IS 3177:1999 and IS 807:2006
               specifications.
             </p>

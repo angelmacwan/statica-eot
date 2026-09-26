@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
+  Cog,
 } from 'lucide-react';
 
 export const ProjectDetailPage: React.FC = () => {
@@ -917,8 +918,10 @@ export const ProjectDetailPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-semibold">
-                      {project.craneType} Crane Platform
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-semibold inline-flex items-center gap-1.5">
+                      <Cog className="w-3 h-3 stroke-[2.2] text-slate-800" />
+                      <span>Statica EOT</span>
+                      <span className="font-normal text-[9px] text-slate-500 lowercase">by StaticaLabs</span>
                     </span>
                     <span className="text-[10px] font-mono text-slate-500">IS 3177:1999 / IS 807:2006</span>
                   </div>
@@ -1344,12 +1347,14 @@ export const ProjectDetailPage: React.FC = () => {
             {/* Document Footer */}
             <div className="border-t border-slate-200 pt-6 text-[10px] text-slate-500 space-y-1.5">
               <div className="flex justify-between items-center font-mono font-medium pb-2 border-b border-slate-100">
-                <span className="text-slate-800">{project.projectName} · StaticaLabs EOT Crane Platform</span>
-                <span>Deterministic IS 3177 Engine</span>
+                <span className="text-slate-800">
+                  {project.projectName} · Statica EOT <span className="font-normal text-slate-400">by StaticaLabs</span>
+                </span>
+                <span>Deterministic IS 3177 / IS 807 Engine</span>
               </div>
               <p>
                 Calculations are deterministically derived from verified engineering workbooks conforming to IS 3177:1999
-                and IS 807:2006. All outputs and verification checks are saved and updated live.
+                and IS 807:2006 by Statica EOT by StaticaLabs. All outputs and verification checks are saved and updated live.
               </p>
             </div>
           </div>

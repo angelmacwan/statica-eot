@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
-import { HardHat, LogOut, LogIn, FolderKanban, ShieldCheck } from 'lucide-react';
+import { Cog, LogOut, LogIn, FolderKanban, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   currentProjectName?: string;
@@ -26,15 +26,15 @@ export const Navbar: React.FC<NavbarProps> = ({ currentProjectName, autoSaveStat
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/projects" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center group-hover:bg-slate-800 transition shadow-sm">
-              <HardHat className="w-4.5 h-4.5" />
+            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center group-hover:bg-slate-800 transition shadow-xs">
+              <Cog className="w-4.5 h-4.5 stroke-[2.2]" />
             </div>
-            <div>
-              <span className="font-semibold text-slate-900 text-sm tracking-tight flex items-center gap-1.5">
-                StaticaLabs
-                <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                  EOT
-                </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-bold text-slate-900 text-sm tracking-tight">
+                Statica EOT
+              </span>
+              <span className="text-[11px] font-normal text-slate-400 font-sans tracking-normal">
+                by StaticaLabs
               </span>
             </div>
           </Link>

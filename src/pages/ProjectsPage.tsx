@@ -4,7 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { getUserProjects, createProject, deleteProject } from '../firebase/firestoreService';
 import { Project } from '../types/project';
 import { Navbar } from '../components/layout/Navbar';
-import { Plus, FolderKanban, ArrowRight, Trash2, Calendar, HardHat, Search } from 'lucide-react';
+import { Plus, FolderKanban, ArrowRight, Trash2, Calendar, Cog, Search } from 'lucide-react';
 
 export const ProjectsPage: React.FC = () => {
   const { user } = useAuth();
@@ -117,7 +117,7 @@ export const ProjectsPage: React.FC = () => {
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
-            <HardHat className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <Cog className="w-10 h-10 text-slate-300 mx-auto mb-2 stroke-[1.5]" />
             <h3 className="text-sm font-semibold text-slate-800">No Projects Found</h3>
             <p className="text-xs text-slate-500 max-w-xs mx-auto mt-1 mb-4">
               {search ? 'No projects match your search criteria.' : 'Create your first crane engineering calculation project to begin.'}
