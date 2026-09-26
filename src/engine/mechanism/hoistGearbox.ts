@@ -25,6 +25,7 @@ export const hoistGearbox: CalculationToolDefinition = {
   name: 'Hoist Gearbox',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required reduction ratio for the hoisting mechanism, checks actual hoist speed within +-10% band, and verifies gearbox mechanical rating.',

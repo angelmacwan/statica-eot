@@ -514,7 +514,7 @@ export const ProjectDetailPage: React.FC = () => {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-xs font-bold text-white">{tool.name}</span>
-                          <StatusBadge status={tool.reviewStatus} size="sm" />
+                          <StatusBadge status={tool.status || tool.reviewStatus} size="sm" />
                         </div>
                         <p className="text-[11px] text-slate-400 leading-tight">{tool.description}</p>
                         <div className="flex items-center gap-2 mt-1.5 text-[10px] text-slate-500 font-mono">

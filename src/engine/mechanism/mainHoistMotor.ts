@@ -21,6 +21,7 @@ export const mainHoistMotor: CalculationToolDefinition = {
   name: 'Main Hoist Motor',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required hoisting motor power and validates selected motor rating according to IS 3177 / IS 807.',

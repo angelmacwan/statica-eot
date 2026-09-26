@@ -109,6 +109,11 @@ export type ToolCategory = 'MECHANISM' | 'STRUCTURAL' | 'CATALOG' | 'LEGACY_INVE
 
 export type ToolTier = 'A' | 'B' | 'C';
 
+export type CalculationToolStatus =
+  | 'verified-source'
+  | 'engineering-review-required'
+  | 'not-implemented';
+
 export type EngineeringReviewStatus =
   | 'SOURCE ONLY'
   | 'TRANSCRIBED'
@@ -118,12 +123,17 @@ export type EngineeringReviewStatus =
   | 'PRODUCTION'
   | 'NOT IMPLEMENTED';
 
+export interface CalculationContext {
+  [key: string]: any;
+}
+
 export interface CalculationToolDefinition {
   id: string;
   version: string;
   name: string;
   category: ToolCategory;
   tier: ToolTier;
+  status: CalculationToolStatus;
   reviewStatus: EngineeringReviewStatus;
   description: string;
   sourceWorkbook: string;
@@ -131,5 +141,5 @@ export interface CalculationToolDefinition {
   inputs: InputDefinition[];
   outputs: OutputDefinition[];
   dependencies: ToolDependency[];
-  calculate: (inputs: Record<string, any>, context?: Record<string, any>) => CalculationResult;
+  calculate(context: CalculationContext): CalculationResult;
 }

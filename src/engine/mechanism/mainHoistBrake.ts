@@ -22,6 +22,7 @@ export const mainHoistBrake: CalculationToolDefinition = {
   name: 'Main Hoist Brake',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required hoisting brake torque and verifies selected electro-hydraulic thruster/shoe brake capacity.',

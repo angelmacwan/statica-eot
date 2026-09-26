@@ -23,6 +23,7 @@ export const longTravelMotor: CalculationToolDefinition = {
   name: 'Long Travel Motor',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required bridge long travel motor power based on crane dead weight, capacity, track rolling friction, and bridge acceleration.',

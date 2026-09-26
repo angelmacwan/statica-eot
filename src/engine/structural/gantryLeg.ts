@@ -18,6 +18,7 @@ export const gantryLeg: CalculationToolDefinition = {
   name: 'Gantry Leg & Stability',
   category: 'STRUCTURAL',
   tier: 'B',
+  status: 'engineering-review-required',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
   description:
     'Calculates overturning moments, storm wind stability, and column buckling safety factor for gantry crane supporting legs.',

@@ -19,6 +19,7 @@ export const bendingMoment: CalculationToolDefinition = {
   name: 'Bending Moment & Reaction',
   category: 'STRUCTURAL',
   tier: 'B',
+  status: 'engineering-review-required',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
   description:
     'Calculates end reactions, maximum bending moment from twin wheel loads and uniform girder self-weight, and bending stress for simply-supported crane girders.',

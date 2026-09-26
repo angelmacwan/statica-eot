@@ -27,6 +27,7 @@ export const crossTravelWheel: CalculationToolDefinition = {
   name: 'Cross Travel Wheels',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates maximum, minimum, and mean wheel loads for trolley wheels, derives minimum wheel diameter from contact pressure criteria, and checks wheel RPM.',

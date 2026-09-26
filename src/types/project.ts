@@ -42,6 +42,7 @@ export interface UserProfile {
   email: string | null;
   photoURL: string | null;
   createdAt: number;
+  updatedAt: number;
   lastLoginAt: number;
   schemaVersion: number;
 }

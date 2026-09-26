@@ -23,6 +23,7 @@ export const wheelRailHardness: CalculationToolDefinition = {
   name: 'Wheel / Rail Hardness Check',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'engineering-review-required',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
   description:
     'Calculates the required wheel tread Brinell hardness (BHN) relative to runway rail hardness, surfacing the legacy calculation discrepancy for review.',

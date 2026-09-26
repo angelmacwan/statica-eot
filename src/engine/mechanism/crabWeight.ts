@@ -25,6 +25,7 @@ export const crabWeight: CalculationToolDefinition = {
   name: 'Crab Weight Estimation',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the total mass of the crab/trolley machinery and structural frame from individual component weights, with a 25% design allowance.',

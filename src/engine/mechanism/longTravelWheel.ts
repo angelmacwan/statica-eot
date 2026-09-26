@@ -27,6 +27,7 @@ export const longTravelWheel: CalculationToolDefinition = {
   name: 'Long Travel Wheels',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates maximum, minimum, and equivalent mean static wheel loads on bridge runway rails, determines required wheel diameter, and calculates wheel RPM.',

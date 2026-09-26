@@ -208,6 +208,7 @@ export function createLegacyToolDefinition(entry: LegacyWorkbookEntry): Calculat
     name: entry.name,
     category: 'LEGACY_INVENTORY',
     tier: 'C',
+    status: 'not-implemented',
     reviewStatus: 'ENGINEERING REVIEW REQUIRED',
     description: `[NOT IMPLEMENTED] ${entry.inferredFunction}. Requires manual engineering transcription from source: ${entry.filename}.`,
     sourceWorkbook: entry.filename,

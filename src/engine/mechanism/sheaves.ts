@@ -23,6 +23,7 @@ export const sheaves: CalculationToolDefinition = {
   name: 'Main Hoist Sheaves',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required pitch circle diameter for main load sheaves and equalizing/compensating sheaves per IS 3177.',

@@ -27,6 +27,7 @@ export const ropeDrum: CalculationToolDefinition = {
   name: 'Rope Drum',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required drum diameter, grooving pitch and depth, active turns, overall drum length, L/D ratio, and wall thickness.',

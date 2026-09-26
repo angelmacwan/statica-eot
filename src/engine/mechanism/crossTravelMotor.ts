@@ -23,6 +23,7 @@ export const crossTravelMotor: CalculationToolDefinition = {
   name: 'Cross Travel Motor',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required cross-travel motor power taking into account rolling friction, rotational inertia, acceleration resistance, and gearbox efficiency.',

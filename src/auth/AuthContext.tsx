@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               email: currentUser.email,
               photoURL: currentUser.photoURL,
               createdAt: now,
+              updatedAt: now,
               lastLoginAt: now,
               schemaVersion: 1,
             };
@@ -44,8 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setProfile(newProfile);
           } else {
             const data = snap.data() as UserProfile;
-            await setDoc(userRef, { lastLoginAt: now }, { merge: true });
-            setProfile(data);
+            await setDoc(userRef, { lastLoginAt: now, updatedAt: now }, { merge: true });
+            setProfile({ ...data, lastLoginAt: now, updatedAt: now });
           }
         } catch (err: any) {
           console.error('Error syncing user profile to Firestore:', err);
@@ -56,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: currentUser.email,
             photoURL: currentUser.photoURL,
             createdAt: Date.now(),
+            updatedAt: Date.now(),
             lastLoginAt: Date.now(),
             schemaVersion: 1,
           });

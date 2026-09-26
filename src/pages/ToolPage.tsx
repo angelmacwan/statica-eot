@@ -178,7 +178,7 @@ export const ToolPage: React.FC = () => {
                 <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/40 text-blue-400">
                   {toolDef.category}
                 </span>
-                <StatusBadge status={toolDef.reviewStatus} size="sm" />
+                <StatusBadge status={toolDef.status || toolDef.reviewStatus} size="sm" />
                 <span className="text-[10px] font-mono text-slate-400">Version {toolDef.version}</span>
               </div>
               <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">

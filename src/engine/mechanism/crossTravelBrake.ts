@@ -24,6 +24,7 @@ export const crossTravelBrake: CalculationToolDefinition = {
   name: 'Cross Travel Brake',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description: 'Calculates the required stopping torque for the cross travel motion and checks catalog brake rating.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',

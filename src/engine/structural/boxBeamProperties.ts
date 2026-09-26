@@ -19,6 +19,7 @@ export const boxBeamProperties: CalculationToolDefinition = {
   name: 'Box Beam Properties',
   category: 'STRUCTURAL',
   tier: 'B',
+  status: 'engineering-review-required',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
   description:
     'Calculates cross-sectional area, neutral axis, section modulus (Zxx, Zyy), moments of inertia (Ixx, Iyy), and unit weight for welded crane box girders.',

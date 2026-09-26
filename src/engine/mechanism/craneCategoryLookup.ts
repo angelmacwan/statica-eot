@@ -19,6 +19,7 @@ export const craneCategoryLookup: CalculationToolDefinition = {
   name: 'Crane Category (IS 3177 Classification)',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Reference lookup for IS 3177:1999 crane duty classification (Class I–IV / M1–M8) and associated duty factors.',

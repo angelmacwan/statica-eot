@@ -24,6 +24,7 @@ export const longTravelBrake: CalculationToolDefinition = {
   name: 'Long Travel Brake',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description: 'Calculates the required stopping torque for bridge long travel and validates catalog brake capacity.',
   sourceWorkbook: '01-MAC-CRANE MECHANISM CALCULATION-IS3177-INDOOR.xlsx',

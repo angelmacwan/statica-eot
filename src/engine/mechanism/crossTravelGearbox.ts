@@ -25,6 +25,7 @@ export const crossTravelGearbox: CalculationToolDefinition = {
   name: 'Cross Travel Gearbox',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required reduction ratio for cross travel, computes actual trolley speed, and checks tolerance within +-10% range.',

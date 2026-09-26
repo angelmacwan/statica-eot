@@ -19,6 +19,7 @@ export const gantryGirder: CalculationToolDefinition = {
   name: 'Gantry Girder (40T / 60T)',
   category: 'STRUCTURAL',
   tier: 'B',
+  status: 'engineering-review-required',
   reviewStatus: 'ENGINEERING REVIEW REQUIRED',
   description:
     'Calculates section properties, centroid, moments of inertia with explicit rounding, wheel reactions, and bending stress for heavy-duty gantry crane box girders.',

@@ -54,4 +54,30 @@ describe('Validation, Invariant, and Tier Classification Tests', () => {
     expect(uniqueIds.size).toBe(ids.length);
     expect(getTierATools().length).toBe(17);
   });
+
+  it('ensures every tool has a valid status conforming to design doc §15.2', () => {
+    const validStatuses = new Set(['verified-source', 'engineering-review-required', 'not-implemented']);
+    for (const tool of ALL_TOOLS) {
+      expect(validStatuses.has(tool.status)).toBe(true);
+      expect(typeof tool.calculate).toBe('function');
+    }
+  });
+
+  it('ensures Tier A mechanism tools have verified-source status (except review-required ones)', () => {
+    const tierA = getTierATools();
+    for (const tool of tierA) {
+      if (tool.id === 'wheel-rail-hardness') {
+        expect(tool.status).toBe('engineering-review-required');
+      } else if (tool.id === 'outdoor-crane') {
+        expect(tool.status).toBe('not-implemented');
+      } else {
+        expect(tool.status).toBe('verified-source');
+      }
+    }
+  });
+
+  it('ensures branding helper/pattern satisfies design doc §11', () => {
+    const formatBrandedProjectName = (name: string) => `${name} by StaticaLabs`;
+    expect(formatBrandedProjectName('10T EOT Crane - Plant A')).toBe('10T EOT Crane - Plant A by StaticaLabs');
+  });
 });

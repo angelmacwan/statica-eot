@@ -12,6 +12,7 @@ export const outdoorCraneStub: CalculationToolDefinition = {
   name: 'Outdoor CT/LT Wind Calculation (NOT IMPLEMENTED)',
   category: 'MECHANISM',
   tier: 'C',
+  status: 'not-implemented',
   reviewStatus: 'NOT IMPLEMENTED',
   description:
     'Outdoor crane mechanism calculation including wind load components. Source is a legacy .xls file with partial extraction only. Manual engineering transcription required before implementation.',

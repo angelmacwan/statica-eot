@@ -29,6 +29,7 @@ export const longTravelGearbox: CalculationToolDefinition = {
   name: 'Long Travel Gearbox',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required reduction ratio for long travel, computes actual bridge travel speed, and verifies that the speed falls within the required +-10% band.',

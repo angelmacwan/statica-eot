@@ -22,6 +22,7 @@ export const wireRope: CalculationToolDefinition = {
   name: 'Wire Rope',
   category: 'MECHANISM',
   tier: 'A',
+  status: 'verified-source',
   reviewStatus: 'TESTED',
   description:
     'Calculates the required wire rope breaking strength based on lifted mass, reeving falls, and coefficient of utilization.',

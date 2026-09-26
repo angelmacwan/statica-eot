@@ -1,9 +1,9 @@
 import React from 'react';
 import { CheckCircle2, AlertTriangle, XCircle, Clock, AlertCircle } from 'lucide-react';
-import { CheckStatus } from '../../engine/types';
+import { CheckStatus, CalculationToolStatus, EngineeringReviewStatus } from '../../engine/types';
 
 interface StatusBadgeProps {
-  status: CheckStatus | 'NOT_CONFIGURED' | 'READY' | 'ENGINEERING REVIEW REQUIRED' | 'NOT IMPLEMENTED' | string;
+  status: CheckStatus | CalculationToolStatus | EngineeringReviewStatus | 'NOT_CONFIGURED' | 'READY' | string;
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
 }
@@ -12,10 +12,11 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
   const getBadgeConfig = () => {
     switch (status) {
       case 'PASS':
+      case 'verified-source':
         return {
           bg: 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300',
           icon: <CheckCircle2 className="w-4 h-4 text-emerald-400" />,
-          label: 'PASS',
+          label: status === 'verified-source' ? 'VERIFIED SOURCE' : 'PASS',
         };
       case 'FAIL':
         return {
@@ -25,6 +26,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
         };
       case 'WARNING':
       case 'ENGINEERING REVIEW REQUIRED':
+      case 'engineering-review-required':
         return {
           bg: 'bg-amber-950/60 border-amber-500/40 text-amber-300',
           icon: <AlertTriangle className="w-4 h-4 text-amber-400" />,
@@ -36,6 +38,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
           icon: <Clock className="w-4 h-4 text-blue-400" />,
           label: 'READY',
         };
+      case 'not-implemented':
       case 'NOT IMPLEMENTED':
         return {
           bg: 'bg-slate-800 border-slate-700 text-slate-400',

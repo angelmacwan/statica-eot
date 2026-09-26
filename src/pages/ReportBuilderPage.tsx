@@ -20,6 +20,16 @@ export const ReportBuilderPage: React.FC = () => {
     loadData();
   }, [projectId]);
 
+  useEffect(() => {
+    if (project?.projectName) {
+      const prevTitle = document.title;
+      document.title = `${project.projectName} by StaticaLabs`;
+      return () => {
+        document.title = prevTitle;
+      };
+    }
+  }, [project?.projectName]);
+
   const loadData = async () => {
     if (!projectId) return;
     setLoading(true);
@@ -137,7 +147,9 @@ export const ReportBuilderPage: React.FC = () => {
               <div className="text-[11px] font-mono tracking-widest uppercase text-blue-400 print:text-blue-700 font-semibold mb-1">
                 ENGINEERING DESIGN CALCULATION REPORT
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-white print:text-black">{project.projectName}</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-white print:text-black">
+                {project.projectName} by StaticaLabs
+              </h1>
               <div className="text-xs text-slate-400 print:text-slate-600 mt-1">
                 by <strong className="text-slate-200 print:text-slate-800">StaticaLabs EOT Crane Engineering</strong> ·
                 eot.staticalabs.com
@@ -231,7 +243,7 @@ export const ReportBuilderPage: React.FC = () => {
                       </h3>
                       <div className="text-[10px] text-slate-400 print:text-slate-600 font-mono">
                         Workbook Lineage: {inst.sourceWorkbook || toolDef?.sourceWorkbook} (
-                        {toolDef?.sourceSheets.join(', ')}) · Status: {toolDef?.reviewStatus}
+                        {toolDef?.sourceSheets.join(', ')}) · Status: {toolDef?.status || toolDef?.reviewStatus}
                       </div>
                     </div>
                     {result && <StatusBadge status={result.status} size="sm" />}
@@ -320,7 +332,11 @@ export const ReportBuilderPage: React.FC = () => {
           </div>
 
           {/* Footer & Disclaimer */}
-          <div className="border-t border-slate-800 print:border-slate-300 pt-6 text-[10px] text-slate-500 print:text-slate-500 space-y-1">
+          <div className="border-t border-slate-800 print:border-slate-300 pt-6 text-[10px] text-slate-500 print:text-slate-500 space-y-2">
+            <div className="flex justify-between items-center font-mono font-medium pb-2 border-b border-slate-800/50 print:border-slate-200">
+              <span className="font-semibold text-slate-400 print:text-black">{project.projectName} by StaticaLabs</span>
+              <span>eot.staticalabs.com</span>
+            </div>
             <p>
               This calculation report was generated deterministically by the StaticaLabs EOT Crane Engineering Platform
               (Engine version {project.calculationEngineVersion}).
