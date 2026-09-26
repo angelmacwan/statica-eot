@@ -465,9 +465,9 @@ export const ProjectDetailPage: React.FC = () => {
   if (!project) return null;
 
   return (
-    <div className="min-h-screen bg-[#fbfbfa] text-slate-900 flex flex-col">
+    <div className="h-screen max-h-screen w-full bg-[#fbfbfa] text-slate-900 flex flex-col overflow-hidden">
       {/* Top Navbar */}
-      <div className="print:hidden">
+      <div className="shrink-0 z-50 print:hidden">
         <Navbar currentProjectName={project.projectName} autoSaveStatus={saveStatus} />
       </div>
 
@@ -486,11 +486,11 @@ export const ProjectDetailPage: React.FC = () => {
       )}
 
       {/* Main Workspace */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 min-h-0 w-full flex overflow-hidden">
         {/* ========================================================================= */}
         {/* LEFT COLUMN: Tools List & Master Spec Button                               */}
         {/* ========================================================================= */}
-        <aside className="w-72 lg:w-80 shrink-0 bg-[#f7f6f3]/80 border-r border-slate-200 flex flex-col h-[calc(100vh-3.25rem)] print:hidden">
+        <aside className="w-72 lg:w-80 shrink-0 bg-[#f7f6f3]/80 border-r border-slate-200 flex flex-col h-full min-h-0 overflow-hidden print:hidden">
           {/* Master Specs Button (Displayed above the list of tools) */}
           <div className="p-3 border-b border-slate-200 bg-white/60">
             <button
@@ -679,7 +679,7 @@ export const ProjectDetailPage: React.FC = () => {
         {/* MIDDLE COLUMN: Master Specs Panel (Pops open side-by-side with report)    */}
         {/* ========================================================================= */}
         {showSpecsPanel && (
-          <aside className="w-96 lg:w-[420px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-[calc(100vh-3.25rem)] shadow-sm z-20 animate-in fade-in slide-in-from-left-2 duration-150 print:hidden">
+          <aside className="w-96 lg:w-[420px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-full min-h-0 overflow-hidden shadow-sm z-20 animate-in fade-in slide-in-from-left-2 duration-150 print:hidden">
             {/* Panel Header */}
             <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
               <div>
@@ -795,7 +795,7 @@ export const ProjectDetailPage: React.FC = () => {
         {/* ========================================================================= */}
         {/* RIGHT COLUMN: Main Work Area - The Final Engineering Report               */}
         {/* ========================================================================= */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col items-center">
+        <main className="flex-1 min-h-0 h-full overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col items-center">
           {/* Top Action & Toolbar */}
           <div className="w-full max-w-4xl flex items-center justify-between mb-4 print:hidden">
             <div className="flex items-center gap-2">
