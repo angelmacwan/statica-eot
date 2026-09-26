@@ -47,7 +47,9 @@ export const ProjectDetailPage: React.FC = () => {
   const [selectedSuite, setSelectedSuite] = useState<'ALL' | 'HOIST' | 'CROSS_TRAVEL' | 'LONG_TRAVEL' | 'STRUCTURAL'>('ALL');
 
   // Auto-save status
+  // Auto-save status and last updated timestamp
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | undefined>(undefined);
   const masterSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toolSaveTimersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -85,6 +87,7 @@ export const ProjectDetailPage: React.FC = () => {
         return;
       }
       setProject(proj);
+      setLastUpdatedAt(proj.updatedAt || Date.now());
 
       const instances = await getToolInstances(projectId);
       const orderMap = new Map((proj.toolOrder || []).map((id, index) => [id, index]));
@@ -180,6 +183,8 @@ export const ProjectDetailPage: React.FC = () => {
             calculatedAt: inst.calculatedAt,
           });
         }
+        const now = Date.now();
+        setLastUpdatedAt(now);
         setSaveStatus('saved');
       } catch (err) {
         console.error('Auto-save error:', err);
@@ -250,6 +255,8 @@ export const ProjectDetailPage: React.FC = () => {
             calculatedAt: inst.calculatedAt,
           });
         }
+        const now = Date.now();
+        setLastUpdatedAt(now);
         setSaveStatus('saved');
       } catch (err) {
         console.error('Error auto-saving tool param:', err);
@@ -345,6 +352,8 @@ export const ProjectDetailPage: React.FC = () => {
 
       // 2. Persist to Firestore in the background
       await addToolInstancesBatch(projectId, createdInstances);
+      const now = Date.now();
+      setLastUpdatedAt(now);
       setSaveStatus('saved');
     } catch (err) {
       console.error('Failed to add tools:', err);
@@ -355,21 +364,39 @@ export const ProjectDetailPage: React.FC = () => {
   /**
    * Remove Tool from calculations
    */
-  const handleDeleteTool = async (e: React.MouseEvent, instanceId: string) => {
-    e.stopPropagation();
+  const handleDeleteTool = async (instanceId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (!projectId) return;
 
     // Immediately remove from UI in 0ms
+    const removedInst = toolInstances.find((i) => i.id === instanceId);
     const remaining = toolInstances.filter((i) => i.id !== instanceId);
     setToolInstances(remaining);
     setSaveStatus('saving');
 
     try {
       await deleteToolInstance(projectId, instanceId);
+      const now = Date.now();
+      setLastUpdatedAt(now);
       setSaveStatus('saved');
+      if (removedInst) {
+        showToast(`Removed ${removedInst.displayName} from calculations`);
+      }
     } catch (err) {
       console.error('Failed to delete tool instance:', err);
       setSaveStatus('error');
+    }
+  };
+
+  /**
+   * Toggle Tool: if unused, add it in; if already added, remove it!
+   */
+  const handleToggleTool = (toolId: string) => {
+    const existingInst = toolInstances.find((t) => t.toolId === toolId);
+    if (existingInst) {
+      handleDeleteTool(existingInst.id);
+    } else {
+      handleAddToolWithDependencies(toolId);
     }
   };
 
@@ -395,6 +422,8 @@ export const ProjectDetailPage: React.FC = () => {
           calculatedAt: inst.calculatedAt,
         });
       }
+      const now = Date.now();
+      setLastUpdatedAt(now);
       setSaveStatus('saved');
       showToast('All calculation modules refreshed');
     } catch (err) {
@@ -472,7 +501,11 @@ export const ProjectDetailPage: React.FC = () => {
     <div className="h-screen max-h-screen w-full bg-[#fbfbfa] text-slate-900 flex flex-col overflow-hidden">
       {/* Top Navbar */}
       <div className="shrink-0 z-50 print:hidden">
-        <Navbar currentProjectName={project.projectName} autoSaveStatus={saveStatus} />
+        <Navbar
+          currentProjectName={project.projectName}
+          autoSaveStatus={saveStatus}
+          lastUpdatedAt={lastUpdatedAt}
+        />
       </div>
 
       {/* Toast Notification */}
@@ -593,27 +626,36 @@ export const ProjectDetailPage: React.FC = () => {
                 return (
                   <div
                     key={tool.id}
-                    onClick={() => handleAddToolWithDependencies(tool.id)}
-                    className={`group w-full p-2 rounded-lg border text-left transition flex items-center justify-between gap-2 cursor-pointer ${
+                    onClick={() => handleToggleTool(tool.id)}
+                    className={`group w-full p-2 rounded-lg border text-left transition flex items-center justify-between gap-2 cursor-pointer select-none ${
                       isAdded
-                        ? 'bg-white border-slate-300 shadow-2xs'
+                        ? 'bg-white border-slate-300 shadow-2xs hover:border-rose-300'
                         : 'bg-transparent border-transparent hover:bg-white hover:border-slate-200'
                     }`}
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
                         {isAdded ? (
-                          <div className="w-4 h-4 rounded-full bg-slate-900 text-white flex items-center justify-center shrink-0">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          <div
+                            className="w-4 h-4 rounded-full bg-slate-900 group-hover:bg-rose-600 text-white flex items-center justify-center shrink-0 transition shadow-2xs"
+                            title="Click to remove from calculations"
+                          >
+                            <Check className="w-2.5 h-2.5 stroke-[3] group-hover:hidden" />
+                            <span className="hidden group-hover:inline text-[9px] font-bold leading-none">✕</span>
                           </div>
                         ) : (
-                          <div className="w-4 h-4 rounded-full border border-slate-300 group-hover:border-slate-500 text-slate-400 group-hover:text-slate-700 flex items-center justify-center shrink-0 transition">
+                          <div
+                            className="w-4 h-4 rounded-full border border-slate-300 group-hover:border-slate-600 text-slate-400 group-hover:text-slate-800 flex items-center justify-center shrink-0 transition"
+                            title="Click to add to calculations"
+                          >
                             <Plus className="w-2.5 h-2.5" />
                           </div>
                         )}
                         <span
                           className={`text-xs truncate ${
-                            isAdded ? 'font-semibold text-slate-900' : 'text-slate-700 group-hover:text-slate-900'
+                            isAdded
+                              ? 'font-semibold text-slate-900 group-hover:text-rose-700'
+                              : 'text-slate-700 group-hover:text-slate-900'
                           }`}
                         >
                           {tool.name}
@@ -629,21 +671,23 @@ export const ProjectDetailPage: React.FC = () => {
 
                       {/* Added status output */}
                       {isAdded && addedInst?.calculationStatus && (
-                        <div className="pl-5.5 flex items-center gap-1.5 mt-0.5">
+                        <div className="pl-5.5 flex items-center gap-1.5 mt-0.5 group-hover:hidden">
                           <StatusBadge status={addedInst.calculationStatus} size="sm" showIcon={false} />
                         </div>
                       )}
                     </div>
 
-                    {/* Quick remove action for added tool */}
-                    {isAdded && addedInst && (
-                      <button
-                        onClick={(e) => handleDeleteTool(e, addedInst.id)}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition"
-                        title="Remove from calculations"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+                    {/* Right side indicator: status or 'Remove' on hover when added */}
+                    {isAdded ? (
+                      <div className="text-[11px] shrink-0">
+                        <span className="hidden group-hover:inline text-[10px] font-medium text-rose-600">
+                          Remove
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition shrink-0 font-medium">
+                        + Add
+                      </span>
                     )}
                   </div>
                 );
@@ -990,7 +1034,7 @@ export const ProjectDetailPage: React.FC = () => {
                             </td>
                             <td className="py-2.5 px-3 text-center print:hidden">
                               <button
-                                onClick={(e) => handleDeleteTool(e, inst.id)}
+                                onClick={(e) => handleDeleteTool(inst.id, e)}
                                 className="text-slate-400 hover:text-rose-600 p-1 rounded"
                                 title="Remove module"
                               >
@@ -1101,7 +1145,7 @@ export const ProjectDetailPage: React.FC = () => {
                             )}
 
                             <button
-                              onClick={(e) => handleDeleteTool(e, inst.id)}
+                              onClick={(e) => handleDeleteTool(inst.id, e)}
                               className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition"
                               title="Remove from report"
                             >

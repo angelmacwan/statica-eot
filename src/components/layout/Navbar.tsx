@@ -6,11 +6,20 @@ import { HardHat, LogOut, LogIn, FolderKanban, ShieldCheck } from 'lucide-react'
 interface NavbarProps {
   currentProjectName?: string;
   autoSaveStatus?: 'saved' | 'saving' | 'error';
+  lastUpdatedAt?: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentProjectName, autoSaveStatus }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentProjectName, autoSaveStatus, lastUpdatedAt }) => {
   const { user, profile, signInWithGoogle, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const formattedTime = lastUpdatedAt
+    ? new Date(lastUpdatedAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+    : null;
 
   return (
     <header className="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-50 transition-colors">
@@ -38,22 +47,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentProjectName, autoSaveStat
           )}
 
           {autoSaveStatus && (
-            <div className="hidden md:flex items-center gap-1.5 ml-2 text-[11px] text-slate-500">
+            <div className="flex items-center gap-1.5 ml-2 text-[11px]">
               {autoSaveStatus === 'saving' ? (
-                <>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                  <span>Saving changes...</span>
-                </>
+                  <span>Saving...</span>
+                </div>
               ) : autoSaveStatus === 'saved' ? (
-                <>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-slate-500">All changes saved</span>
-                </>
+                  <span>Saved</span>
+                  {formattedTime && (
+                    <span className="text-emerald-700/70 font-mono text-[10px]">
+                      · {formattedTime}
+                    </span>
+                  )}
+                </div>
               ) : (
-                <>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                  <span className="text-rose-600">Save failed</span>
-                </>
+                  <span>Save failed</span>
+                </div>
               )}
             </div>
           )}
