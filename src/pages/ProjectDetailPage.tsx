@@ -647,66 +647,71 @@ export const ProjectDetailPage: React.FC = () => {
                   <div
                     key={tool.id}
                     onClick={() => handleToggleTool(tool.id)}
-                    className={`group w-full p-2 rounded-lg border text-left transition flex items-center justify-between gap-2 cursor-pointer select-none ${
+                    className={`group w-full h-10 px-2.5 rounded-lg border text-left transition flex items-center justify-between gap-2 cursor-pointer select-none ${
                       isAdded
                         ? 'bg-white border-slate-300 shadow-2xs hover:border-rose-300'
                         : 'bg-transparent border-transparent hover:bg-white hover:border-slate-200'
                     }`}
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        {isAdded ? (
-                          <div
-                            className="w-4 h-4 rounded-full bg-slate-900 group-hover:bg-rose-600 text-white flex items-center justify-center shrink-0 transition shadow-2xs"
-                            title="Click to remove from calculations"
-                          >
-                            <Check className="w-2.5 h-2.5 stroke-[3] group-hover:hidden" />
-                            <span className="hidden group-hover:inline text-[9px] font-bold leading-none">✕</span>
-                          </div>
-                        ) : (
-                          <div
-                            className="w-4 h-4 rounded-full border border-slate-300 group-hover:border-slate-600 text-slate-400 group-hover:text-slate-800 flex items-center justify-center shrink-0 transition"
-                            title="Click to add to calculations"
-                          >
-                            <Plus className="w-2.5 h-2.5" />
-                          </div>
-                        )}
-                        <span
-                          className={`text-xs truncate ${
-                            isAdded
-                              ? 'font-semibold text-slate-900 group-hover:text-rose-700'
-                              : 'text-slate-700 group-hover:text-slate-900'
-                          }`}
+                    {/* Left: Icon + Tool Name */}
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      {isAdded ? (
+                        <div
+                          className="w-4 h-4 rounded-full bg-slate-900 group-hover:bg-rose-600 text-white flex items-center justify-center shrink-0 transition shadow-2xs"
+                          title="Click to remove from calculations"
                         >
-                          {tool.name}
-                        </span>
-                      </div>
-
-                      {/* Dependency hint */}
-                      {!isAdded && missingParents.length > 0 && (
-                        <div className="text-[10px] text-slate-400 pl-5.5 truncate">
-                          Auto-adds {missingParents.length} prerequisite{missingParents.length > 1 ? 's' : ''}
+                          <Check className="w-2.5 h-2.5 stroke-[3] group-hover:hidden" />
+                          <span className="hidden group-hover:inline text-[9px] font-bold leading-none">✕</span>
+                        </div>
+                      ) : (
+                        <div
+                          className="w-4 h-4 rounded-full border border-slate-300 group-hover:border-slate-600 text-slate-400 group-hover:text-slate-800 flex items-center justify-center shrink-0 transition"
+                          title="Click to add to calculations"
+                        >
+                          <Plus className="w-2.5 h-2.5" />
                         </div>
                       )}
+                      <span
+                        className={`text-xs truncate ${
+                          isAdded
+                            ? 'font-semibold text-slate-900 group-hover:text-rose-700'
+                            : 'text-slate-700 group-hover:text-slate-900'
+                        }`}
+                        title={tool.name}
+                      >
+                        {tool.name}
+                      </span>
                     </div>
 
-                    {/* Right side: status badge on the side or 'Remove' on hover */}
-                    {isAdded ? (
-                      <div className="shrink-0 flex items-center">
-                        <span className="hidden group-hover:inline text-[10px] font-medium text-rose-600">
-                          Remove
-                        </span>
-                        {addedInst?.calculationStatus && (
-                          <span className="group-hover:hidden">
-                            <StatusBadge status={addedInst.calculationStatus} size="sm" showIcon={false} />
+                    {/* Right: Fixed height action / status slot */}
+                    <div className="shrink-0 h-6 flex items-center justify-end">
+                      {isAdded ? (
+                        <>
+                          <span className="hidden group-hover:inline-flex items-center px-2 py-0.5 rounded-md border border-rose-200 bg-rose-50 text-rose-700 text-[11px] font-medium shadow-2xs">
+                            Remove
                           </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition shrink-0 font-medium">
-                        + Add
-                      </span>
-                    )}
+                          {addedInst?.calculationStatus && (
+                            <span className="group-hover:hidden inline-flex items-center">
+                              <StatusBadge status={addedInst.calculationStatus} size="sm" showIcon={false} />
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {missingParents.length > 0 && (
+                            <span
+                              className="group-hover:hidden text-[10px] text-slate-400 font-mono px-1.5 py-0.5 rounded bg-slate-100/80 border border-slate-200/60"
+                              title={`Auto-adds ${missingParents.length} prerequisite modules (${missingParents.join(', ')})`}
+                            >
+                              +{missingParents.length}
+                            </span>
+                          )}
+                          <span className="hidden group-hover:inline-flex items-center px-2 py-0.5 rounded-md border border-slate-200 bg-white text-slate-700 text-[11px] font-medium shadow-2xs">
+                            + Add
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 );
               })
